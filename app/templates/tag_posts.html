@@ -1,0 +1,179 @@
+{% extends "layout.html" %}
+
+{% block title %}
+#{{ tag.name }} — DevJournal
+{% endblock %}
+
+{% block content %}
+
+<div class="tag-page">
+
+    <div class="tag-page-header">
+
+        <span class="tag-page-label">
+            Tag
+        </span>
+
+        <h1>
+            #{{ tag.name }}
+        </h1>
+
+        <p>
+            Articles tagged with #{{ tag.name }}
+        </p>
+
+    </div>
+
+
+    {% if posts.items %}
+
+        <div class="tag-posts-list">
+
+            {% for post in posts.items %}
+
+                <article class="tag-post-card">
+
+                    <a
+                        href="{{ url_for(
+                            'category_posts',
+                            category=post.category
+                        ) }}"
+                        class="post-category"
+                    >
+                        {{ post.category }}
+                    </a>
+
+                    <h2>
+                        <a
+                            href="{{ url_for(
+                                'post',
+                                post_id=post.id
+                            ) }}"
+                        >
+                            {{ post.title }}
+                        </a>
+                    </h2>
+
+                    <p class="tag-post-excerpt">
+                        {{ post.content[:250] }}
+                        {% if post.content|length > 250 %}
+                            ...
+                        {% endif %}
+                    </p>
+
+                    <div class="tag-post-meta">
+
+                        <span>
+                            By
+                            <a
+                                href="{{ url_for(
+                                    'user_posts',
+                                    username=post.author.username
+                                ) }}"
+                            >
+                                {{ post.author.username }}
+                            </a>
+                        </span>
+
+                        <span>•</span>
+
+                        <span>
+                            {{ post.date_posted.strftime(
+                                '%d %b %Y'
+                            ) }}
+                        </span>
+
+                    </div>
+
+                    {% if post.tags %}
+
+                        <div class="post-tags">
+
+                            {% for post_tag in post.tags %}
+
+                                <a
+                                    href="{{ url_for(
+                                        'tag_posts',
+                                        tag_name=post_tag.name
+                                    ) }}"
+                                    class="post-tag"
+                                >
+                                    #{{ post_tag.name }}
+                                </a>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+
+        {% if posts.pages > 1 %}
+
+            <div class="pagination">
+
+                {% if posts.has_prev %}
+                    <a
+                        href="{{ url_for(
+                            'tag_posts',
+                            tag_name=tag.name,
+                            page=posts.prev_num
+                        ) }}"
+                    >
+                        ← Previous
+                    </a>
+                {% endif %}
+
+                <span>
+                    Page {{ posts.page }} of {{ posts.pages }}
+                </span>
+
+                {% if posts.has_next %}
+                    <a
+                        href="{{ url_for(
+                            'tag_posts',
+                            tag_name=tag.name,
+                            page=posts.next_num
+                        ) }}"
+                    >
+                        Next →
+                    </a>
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    {% else %}
+
+        <div class="tag-empty">
+
+            <h2>
+                No posts found
+            </h2>
+
+            <p>
+                There are currently no articles using
+                #{{ tag.name }}.
+            </p>
+
+            <a
+                href="{{ url_for('home') }}"
+                class="btn"
+            >
+                Browse Articles
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

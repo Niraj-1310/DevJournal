@@ -1,0 +1,212 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ category }} Posts | DevJournal
+{% endblock %}
+
+{% block content %}
+
+<div class="back-button">
+    <a href="{{ url_for('home') }}" class="back-arrow">
+        ←
+    </a>
+</div>
+
+<section class="posts container">
+
+    <h2>{{ category }} Posts</h2>
+
+    {% if posts.items %}
+
+        {% for post in posts.items %}
+
+        <article class="post-card">
+
+            <div class="post-meta">
+
+                <span>
+                    By
+                    <a href="{{ url_for('user_posts', username=post.author.username) }}">
+                        {{ post.author.username }}
+                    </a>
+                </span>
+
+                <span>
+                    {{ post.date_posted.strftime('%d %b %Y') }}
+                </span>
+
+            </div>
+
+            <h3>
+                <a href="{{ url_for('post', post_id=post.id) }}"
+                   class="post-title">
+                    {{ post.title }}
+                </a>
+            </h3>
+
+            <a href="{{ url_for('category_posts', category=post.category) }}"
+               class="post-category">
+                {{ post.category or "Uncategorized" }}
+            </a>
+
+            <p>
+                {{ post.content[:200] }}
+
+                {% if post.content|length > 200 %}
+                    ...
+                {% endif %}
+            </p>
+
+            <div class="post-footer">
+
+                <div class="post-reactions">
+
+                    {% if current_user.is_authenticated %}
+
+                        <form
+                            class="like-form"
+                            action="{{ url_for('like_post', post_id=post.id) }}"
+                            method="POST"
+                        >
+                            <button
+                                type="submit"
+                                class="inline-reaction-btn"
+                                aria-label="Like this post"
+                            >
+                                <span class="heart-icon" aria-hidden="true">
+                                    {% if post.likes
+                                        |selectattr("user_id", "equalto", current_user.id)
+                                        |list %}
+                                        ❤️
+                                    {% else %}
+                                        🤍
+                                    {% endif %}
+                                </span>
+
+                                <span class="like-count">
+                                    {{ post.likes|length }}
+                                </span>
+                            </button>
+                        </form>
+
+                    {% else %}
+
+                        <span>
+                            ❤️ {{ post.likes|length }}
+                        </span>
+
+                    {% endif %}
+
+                    <a
+                        href="{{ url_for('post', post_id=post.id) }}#comments"
+                        class="comment-count"
+                    >
+                        💬 {{ post.comments|length }}
+                    </a>
+
+                </div>
+
+                <a href="{{ url_for('post', post_id=post.id) }}"
+                   class="read-more">
+                    Read More →
+                </a>
+
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+
+        {% if posts.pages > 1 %}
+
+        <div class="pagination">
+
+            {% if posts.has_prev %}
+
+                <a href="{{ url_for(
+                    'category_posts',
+                    category=category,
+                    page=posts.prev_num
+                ) }}">
+                    &laquo;
+                </a>
+
+            {% endif %}
+
+
+            {% for page_num in posts.iter_pages(
+                left_edge=1,
+                right_edge=1,
+                left_current=1,
+                right_current=2
+            ) %}
+
+                {% if page_num %}
+
+                    {% if page_num == posts.page %}
+
+                        <span class="active">
+                            {{ page_num }}
+                        </span>
+
+                    {% else %}
+
+                        <a href="{{ url_for(
+                            'category_posts',
+                            category=category,
+                            page=page_num
+                        ) }}">
+                            {{ page_num }}
+                        </a>
+
+                    {% endif %}
+
+                {% else %}
+
+                    <span>...</span>
+
+                {% endif %}
+
+            {% endfor %}
+
+
+            {% if posts.has_next %}
+
+                <a href="{{ url_for(
+                    'category_posts',
+                    category=category,
+                    page=posts.next_num
+                ) }}">
+                    &raquo;
+                </a>
+
+            {% endif %}
+
+        </div>
+
+        {% endif %}
+
+
+    {% else %}
+
+        <div class="post-card category-empty">
+
+            <h3>No posts found.</h3>
+
+            <p>
+                There are no posts in the "{{ category }}" category yet.
+            </p>
+
+            <a href="{{ url_for('home') }}"
+               class="hero-btn secondary">
+                Back to Home
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

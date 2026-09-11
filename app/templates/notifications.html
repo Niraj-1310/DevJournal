@@ -1,0 +1,626 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="notifications-page">
+
+    <!-- Page Header -->
+    <div class="notifications-top">
+
+        <div class="notifications-heading">
+
+            <div class="notifications-title-row">
+
+                <div class="notifications-title-icon">
+                    🔔
+                </div>
+
+                <div>
+                    <h1>Notifications</h1>
+
+                    <p>
+                        Stay updated with activity on your posts.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="notifications-actions">
+
+            <div class="notifications-count">
+
+                <span id="page-unread-count">
+                    {{ unread_notifications_count }}
+                </span>
+
+                <span>
+                    unread
+                </span>
+
+            </div>
+
+
+            {% if unread_notifications_count > 0 %}
+
+                <button
+                    type="button"
+                    id="mark-all-read"
+                    class="mark-all-read-btn"
+                >
+                    <span>✓</span>
+                    Mark all as read
+                </button>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- Close Button -->
+
+        <button
+            type="button"
+            class="notifications-close"
+            aria-label="Close notifications"
+        >
+            ×
+        </button>
+
+    </div>
+
+
+    <!-- Notification Content -->
+
+    {% if notifications %}
+
+        <div class="notifications-container">
+
+            <div class="notifications-list">
+
+                {% for notification in notifications %}
+
+                    <article
+                        class="notification-item {% if not notification.is_read %}unread{% else %}read{% endif %}"
+                        data-notification-id="{{ notification.id }}"
+                    >
+
+                        <!-- Notification Icon -->
+
+                        <div class="notification-icon">
+
+                            {% if notification.type == 'like' %}
+
+                                ❤️
+
+                            {% elif notification.type == 'comment' %}
+
+                                💬
+
+                            {% else %}
+
+                                🔔
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- Notification Main Content -->
+
+                        <div class="notification-main">
+
+                            <div class="notification-message">
+
+                                <strong>
+                                    {{ notification.actor.username }}
+                                </strong>
+
+                                {% if notification.type == 'like' %}
+
+                                    <span>
+                                        liked your post
+                                    </span>
+
+                                {% elif notification.type == 'comment' %}
+
+                                    <span>
+                                        commented on your post
+                                    </span>
+
+                                {% else %}
+
+                                    <span>
+                                        interacted with your post
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            {% if notification.post %}
+
+                                <div class="notification-post">
+
+                                    <span class="notification-post-label">
+                                        POST
+                                    </span>
+
+                                    <span class="notification-post-title">
+                                        {{ notification.post.title }}
+                                    </span>
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <div class="notification-bottom">
+
+                                <time class="notification-time">
+                                    {{ notification.created_at.strftime('%d %b %Y, %I:%M %p') }}
+                                </time>
+
+
+                                {% if notification.post %}
+
+                                    <a
+                                        href="{{ url_for('post', post_id=notification.post.id) }}"
+                                        class="notification-view"
+                                    >
+                                        View post
+                                        <span>→</span>
+                                    </a>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Notification Status / Action -->
+
+                        <div class="notification-status">
+
+                            {% if not notification.is_read %}
+
+                                <span
+                                    class="unread-dot"
+                                    title="Unread"
+                                ></span>
+
+                                <button
+                                    type="button"
+                                    class="mark-read"
+                                    data-notification-id="{{ notification.id }}"
+                                >
+                                    Mark as read
+                                </button>
+
+                            {% else %}
+
+                                <span class="read-label">
+                                    Read
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    {% else %}
+
+        <!-- No Notifications -->
+
+        <div class="notifications-empty">
+
+            <div class="empty-icon">
+                🔔
+            </div>
+
+            <h2>
+                No notifications yet
+            </h2>
+
+            <p>
+                When someone likes or comments on your posts,
+                you'll see it here.
+            </p>
+
+            <a
+                href="{{ url_for('home') }}"
+                class="empty-action"
+            >
+                Explore articles
+                <span>→</span>
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const markAllButton =
+        document.getElementById("mark-all-read");
+
+    const pageUnreadCount =
+        document.getElementById("page-unread-count");
+
+    const closeButton =
+        document.querySelector(".notifications-close");
+
+    if (closeButton) {
+        closeButton.addEventListener("click", function () {
+            window.history.back();
+        });
+    }
+
+
+    // ------------------------------------------
+    // Update unread count
+    // ------------------------------------------
+
+    function updateUnreadCount(amount) {
+
+        if (!pageUnreadCount) {
+            return;
+        }
+
+
+        const current =
+            parseInt(pageUnreadCount.textContent) || 0;
+
+        const newCount =
+            Math.max(0, current + amount);
+
+
+        pageUnreadCount.textContent =
+            newCount;
+
+
+        // Update navbar notification badge
+
+        const navbarBadge =
+            document.querySelector(
+                ".notification-badge, .notification-count, [data-notification-count]"
+            );
+
+
+        if (navbarBadge) {
+
+            navbarBadge.textContent =
+                newCount;
+
+
+            if (newCount === 0) {
+
+                navbarBadge.style.display =
+                    "none";
+
+            } else {
+
+                navbarBadge.style.display =
+                    "flex";
+
+            }
+
+        }
+
+
+        // Remove Mark All button
+
+        if (newCount === 0 && markAllButton) {
+
+            markAllButton.remove();
+
+        }
+
+    }
+
+
+    // ------------------------------------------
+    // Mark individual notification as read
+    // ------------------------------------------
+
+    document
+        .querySelectorAll(".mark-read")
+        .forEach(function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    const notificationId =
+                        this.dataset.notificationId;
+
+
+                    const notificationItem =
+                        this.closest(".notification-item");
+
+
+                    if (!notificationItem) {
+                        return;
+                    }
+
+
+                    this.disabled = true;
+
+
+                    fetch(
+                        `/notifications/${notificationId}/read`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "X-Requested-With":
+                                    "XMLHttpRequest"
+                            }
+                        }
+                    )
+
+                    .then(function (response) {
+
+                        if (!response.ok) {
+
+                            throw new Error(
+                                "Failed to mark notification as read."
+                            );
+
+                        }
+
+                        return response.json();
+
+                    })
+
+                    .then(function (data) {
+
+                        if (!data.success) {
+
+                            throw new Error(
+                                "Notification could not be marked as read."
+                            );
+
+                        }
+
+
+                        // Change visual state
+
+                        notificationItem
+                            .classList
+                            .remove("unread");
+
+                        notificationItem
+                            .classList
+                            .add("read");
+
+
+                        // Remove unread dot
+
+                        const dot =
+                            notificationItem
+                                .querySelector(".unread-dot");
+
+
+                        if (dot) {
+                            dot.remove();
+                        }
+
+
+                        // Replace button with Read
+
+                        const status =
+                            notificationItem
+                                .querySelector(
+                                    ".notification-status"
+                                );
+
+
+                        if (status) {
+
+                            status.innerHTML = `
+                                <span class="read-label">
+                                    Read
+                                </span>
+                            `;
+
+                        }
+
+
+                        // Update counter
+
+                        updateUnreadCount(-1);
+
+                    })
+
+                    .catch(function (error) {
+
+                        console.error(error);
+
+                        this.disabled = false;
+
+                    }.bind(this));
+
+                }
+            );
+
+        });
+
+
+    // ------------------------------------------
+    // Mark all notifications as read
+    // ------------------------------------------
+
+    if (markAllButton) {
+
+        markAllButton.addEventListener(
+            "click",
+            function () {
+
+                this.disabled = true;
+
+                this.classList.add("loading");
+
+
+                const button =
+                    this;
+
+
+                fetch(
+                    "/notifications/read-all",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "X-Requested-With":
+                                "XMLHttpRequest"
+                        }
+                    }
+                )
+
+                .then(function (response) {
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Failed to mark notifications as read."
+                        );
+
+                    }
+
+                    return response.json();
+
+                })
+
+                .then(function (data) {
+
+                    if (!data.success) {
+
+                        throw new Error(
+                            "Could not mark notifications as read."
+                        );
+
+                    }
+
+
+                    // Convert unread notifications to read
+
+                    document
+                        .querySelectorAll(
+                            ".notification-item.unread"
+                        )
+                        .forEach(function (item) {
+
+                            item.classList.remove(
+                                "unread"
+                            );
+
+                            item.classList.add(
+                                "read"
+                            );
+
+
+                            const dot =
+                                item.querySelector(
+                                    ".unread-dot"
+                                );
+
+
+                            if (dot) {
+                                dot.remove();
+                            }
+
+
+                            const status =
+                                item.querySelector(
+                                    ".notification-status"
+                                );
+
+
+                            if (status) {
+
+                                status.innerHTML = `
+                                    <span class="read-label">
+                                        Read
+                                    </span>
+                                `;
+
+                            }
+
+                        });
+
+
+                    // Set page count to zero
+
+                    if (pageUnreadCount) {
+
+                        pageUnreadCount.textContent =
+                            "0";
+
+                    }
+
+
+                    // Update navbar badge
+
+                    const navbarBadge =
+                        document.querySelector(
+                            ".notification-badge, .notification-count, [data-notification-count]"
+                        );
+
+
+                    if (navbarBadge) {
+
+                        navbarBadge.textContent =
+                            "0";
+
+                        navbarBadge.style.display =
+                            "none";
+
+                    }
+
+
+                    // Remove button
+
+                    button.remove();
+
+                })
+
+                .catch(function (error) {
+
+                    console.error(error);
+
+                    button.disabled =
+                        false;
+
+                    button.classList.remove(
+                        "loading"
+                    );
+
+                });
+
+            }
+        );
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

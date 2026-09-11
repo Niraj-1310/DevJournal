@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Server Error
+{% endblock %}
+
+{% block content %}
+
+<section class="error-page">
+
+    <h1>500</h1>
+
+    <h2>Something went wrong.</h2>
+
+    <p>
+        An unexpected error occurred. Please try again later.
+    </p>
+
+    <a href="{{ url_for('home') }}" class="hero-btn">
+        Back to Home
+    </a>
+
+</section>
+
+{% endblock %}

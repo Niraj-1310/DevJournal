@@ -1,0 +1,269 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Search | DevJournal
+{% endblock title %}
+
+{% block content %}
+
+<div class="back-button">
+    <a
+        href="{{ request.referrer or url_for('home') }}"
+        class="back-arrow"
+        data-direct-back="1"
+    >
+        ←
+    </a>
+</div>
+
+
+<section class="search-page">
+
+    <!-- Search Header -->
+
+    <div class="search-results-header">
+
+        <div class="search-results-heading">
+
+            <span class="search-results-icon">
+                🔎
+            </span>
+
+            <div>
+                <h1>
+                    Search Results
+                </h1>
+
+                {% if query %}
+
+                    <p>
+                        Results for
+                        <strong>"{{ query }}"</strong>
+                    </p>
+
+                {% else %}
+
+                    <p>
+                        Browse all articles
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        {% if query %}
+
+            <a
+                href="{{ url_for('home') }}"
+                class="search-clear-btn"
+            >
+                Clear Search
+            </a>
+
+        {% endif %}
+
+    </div>
+
+
+    {% if posts.items %}
+
+        <!-- Result Summary -->
+
+        <div class="search-results-summary">
+
+            <span>
+                {{ posts.total }}
+                {% if posts.total == 1 %}
+                    result
+                {% else %}
+                    results
+                {% endif %}
+            </span>
+
+            {% if posts.pages > 1 %}
+
+                <span>
+                    · Page {{ posts.page }} of {{ posts.pages }}
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- Search Results -->
+
+        <div class="post-list">
+
+            {% for post in posts.items %}
+
+                <article class="post-card">
+
+                    {% if post.category %}
+                        <a
+                            href="{{ url_for('category_posts', category=post.category) }}"
+                            class="post-category"
+                        >
+                            {{ post.category|highlight(query) }}
+                        </a>
+                    {% else %}
+                        <span class="post-category">Uncategorized</span>
+                    {% endif %}
+
+                    <h3>
+                        <a
+                            href="{{ url_for('post', post_id=post.id) }}"
+                            class="post-title"
+                        >
+                            {{ post.title|highlight(query) }}
+                        </a>
+                    </h3>
+
+                    <p class="post-info">
+                        By
+                        <a href="{{ url_for('user_posts', username=post.author.username) }}">
+                            {{ post.author.username }}
+                        </a>
+
+                        <span class="post-info-separator">•</span>
+
+                        {{ post.date_posted.strftime('%d %b %Y, %I:%M %p') }}
+                    </p>
+
+                    <p class="post-content">
+                        {{ post.content[:250]|highlight(query) }}
+                        {% if post.content|length > 250 %}...{% endif %}
+                    </p>
+
+                    <a
+                        href="{{ url_for('post', post_id=post.id) }}"
+                        class="read-more"
+                    >
+                        Read More →
+                    </a>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- Pagination -->
+
+        {% if posts.pages > 1 %}
+
+            <div class="pagination">
+
+                {% for page_num in posts.iter_pages(
+                    left_edge=1,
+                    right_edge=1,
+                    left_current=2,
+                    right_current=2
+                ) %}
+
+                    {% if page_num %}
+
+                        {% if page_num == posts.page %}
+
+                            <span class="active">
+                                {{ page_num }}
+                            </span>
+
+                        {% else %}
+
+                            <a
+                                href="{{ url_for(
+                                    'search',
+                                    q=query,
+                                    page=page_num
+                                ) }}"
+                            >
+                                {{ page_num }}
+                            </a>
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <span class="pagination-dots">
+                            ...
+                        </span>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
+    {% else %}
+
+        <!-- Empty Search State -->
+
+        <div class="search-empty">
+
+            <div class="search-empty-icon">
+                🔎
+            </div>
+
+            {% if query %}
+
+                <h2>
+                    No results found
+                </h2>
+
+                <p>
+                    We couldn't find any articles matching
+                    <strong>"{{ query }}"</strong>.
+                </p>
+
+                <div class="search-empty-actions">
+
+                    <a
+                        href="{{ url_for('home') }}"
+                        class="action-btn secondary"
+                    >
+                        Back to Home
+                    </a>
+
+                    <a
+                        href="{{ url_for('search') }}"
+                        class="action-btn"
+                    >
+                        View All Articles
+                    </a>
+
+                </div>
+
+            {% else %}
+
+                <h2>
+                    No articles available
+                </h2>
+
+                <p>
+                    There are currently no articles to display.
+                </p>
+
+                <a
+                    href="{{ url_for('home') }}"
+                    class="action-btn secondary"
+                >
+                    Back to Home
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock content %}

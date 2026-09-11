@@ -1,0 +1,190 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Edit Profile | DevJournal
+{% endblock %}
+
+{% block content %}
+
+<section class="account-section">
+
+    <div class="profile-header">
+
+        <img
+            src="{{ image_file }}"
+            class="account-img"
+            alt="{{ current_user.username }}'s profile picture"
+        >
+
+        <h2>{{ current_user.username }}</h2>
+
+        <p class="account-email">
+            {{ current_user.email }}
+        </p>
+
+        <p class="dashboard-meta">
+            Member since
+            {{ current_user.date_joined.strftime('%B %d, %Y') if current_user.date_joined else 'Recently' }}
+        </p>
+
+        <p class="profile-bio">
+            {{ current_user.bio if current_user.bio else "Tell everyone a little about yourself." }}
+        </p>
+
+        <div class="profile-links">
+
+            {% if current_user.github %}
+                <a
+                    href="{{ current_user.github }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    GitHub
+                </a>
+            {% endif %}
+
+            {% if current_user.linkedin %}
+                <a
+                    href="{{ current_user.linkedin }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    LinkedIn
+                </a>
+            {% endif %}
+
+            {% if current_user.website %}
+                <a
+                    href="{{ current_user.website }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Portfolio
+                </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <h2 class="account-form-heading">
+        Update Your Profile
+    </h2>
+
+    <form method="POST"
+          action=""
+          enctype="multipart/form-data">
+
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+
+            {{ form.username.label }}
+
+            {{ form.username(class="form-control") }}
+
+            {% for error in form.username.errors %}
+                <small class="form-error">{{ error }}</small>
+            {% endfor %}
+
+        </div>
+
+        <div class="form-group">
+
+            {{ form.email.label }}
+
+            {{ form.email(class="form-control") }}
+
+            {% for error in form.email.errors %}
+                <small style="color:red;">{{ error }}</small>
+            {% endfor %}
+
+        </div>
+
+        <div class="form-group">
+
+            {{ form.bio.label }}
+
+            {{ form.bio(class="form-control") }}
+
+        </div>
+
+        <div class="form-group">
+
+            {{ form.github.label }}
+
+            {{ form.github(
+                class="form-control",
+                placeholder="https://github.com/yourusername"
+            ) }}
+
+        </div>
+
+        <div class="form-group">
+
+            {{ form.linkedin.label }}
+
+            {{ form.linkedin(
+                class="form-control",
+                placeholder="https://linkedin.com/in/yourusername"
+            ) }}
+
+        </div>
+
+        <div class="form-group">
+
+            {{ form.website.label }}
+
+            {{ form.website(
+                class="form-control",
+                placeholder="https://yourportfolio.com"
+            ) }}
+
+        </div>
+
+        <div class="form-group profile-upload-group">
+
+            {{ form.picture.label }}
+
+            <label for="picture" class="custom-file-label">
+                📷 Choose New Profile Picture
+            </label>
+
+            {{ form.picture(
+                id="picture",
+                class="profile-file-input"
+            ) }}
+
+            <small class="current-picture-name">
+                Current picture: {{ current_user.image_file }}
+            </small>
+
+            {% for error in form.picture.errors %}
+                <small class="form-error">{{ error }}</small>
+            {% endfor %}
+
+        </div>
+
+        <div class="account-action-buttons" 
+            style="display:flex; justify-content:center; gap:15px; margin-top:35px;">
+
+            {{ form.submit(class="hero-btn") }}
+            <a
+                href="{{ url_for(
+                    'dashboard',
+                    from_account='1',
+                    return_url=return_url
+                ) }}"
+                class="hero-btn secondary"
+            >
+                Back to Dashboard
+            </a>
+        </div>
+
+    </form>
+
+</section>
+
+{% endblock %}

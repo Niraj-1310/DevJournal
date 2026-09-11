@@ -1,0 +1,194 @@
+{% extends "layout.html" %}
+
+{% block title %}
+{{ user.username }} | DevJournal
+{% endblock %}
+
+{% block content %}
+
+<div class="back-button">
+    <a href="{{ request.referrer or url_for('home') }}" class="back-arrow">
+        ← 
+    </a>
+</div>
+
+<section class="account-section">
+
+    <div class="profile-header">
+
+        <img
+            src="{{ url_for('static', filename='profile_pics/' + user.image_file) }}"
+            class="account-img"
+        >
+
+        <h2>{{ user.username }}</h2>
+
+        <p class="account-email">
+            {{ user.email }}
+        </p>
+
+        <p class="dashboard-meta">
+            Member since
+            {{ user.date_joined.strftime('%B %d, %Y') if user.date_joined else 'Recently' }}
+        </p>
+
+        {% if user.bio %}
+        <p class="profile-bio">
+            {{ user.bio }}
+        </p>
+        {% endif %}
+
+        <div class="profile-links">
+
+            {% if user.github %}
+            <a href="{{ user.github }}" target="_blank">
+                🐙 GitHub
+            </a>
+            {% endif %}
+
+            {% if user.linkedin %}
+            <a href="{{ user.linkedin }}" target="_blank">
+                💼 LinkedIn
+            </a>
+            {% endif %}
+
+            {% if user.website %}
+            <a href="{{ user.website }}" target="_blank">
+                🌐 Portfolio
+            </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <div class="dashboard-stats">
+
+        <div class="stat-card">
+            <h3>{{ total_posts }}</h3>
+            <p>Posts</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ total_likes }}</h3>
+            <p>Likes</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ total_comments }}</h3>
+            <p>Comments</p>
+        </div>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <h2 style="margin-bottom:25px;">
+        Posts by {{ user.username }}
+    </h2>
+
+    {% for post in posts.items %}
+
+    <article class="post-card">
+
+        <a href="{{ url_for('category_posts', category=post.category) }}" class="post-category">
+            {{ post.category }}
+        </a>
+
+        <h3>
+
+            <a href="{{ url_for('post', post_id=post.id) }}"
+               class="post-title">
+
+                {{ post.title }}
+
+            </a>
+
+        </h3>
+
+        <div class="post-info">
+
+            {{ post.date_posted.strftime("%d %b %Y • %I:%M %p") }}
+
+        </div>
+
+        <p>
+
+            {{ post.content[:180] }}
+
+            {% if post.content|length > 180 %}
+            ...
+            {% endif %}
+
+        </p>
+
+        <div class="post-footer">
+
+            <div class="post-reactions">
+
+                <span>❤️ {{ post.likes|length }}</span>
+
+                <span>💬 {{ post.comments|length }}</span>
+
+            </div>
+
+            <a href="{{ url_for('post', post_id=post.id) }}"
+               class="read-more">
+
+                Read More →
+
+            </a>
+
+        </div>
+
+    </article>
+
+    {% else %}
+
+    <div class="post-card">
+
+        <h3>No posts yet.</h3>
+
+        <p>
+            This user hasn't published anything yet.
+        </p>
+
+    </div>
+
+    {% endfor %}
+
+    {% if posts.pages > 1 %}
+
+    <div class="pagination">
+
+        {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+
+            {% if page_num %}
+
+                {% if posts.page == page_num %}
+
+                    <span class="active">{{ page_num }}</span>
+
+                {% else %}
+
+                    <a href="{{ url_for('user_posts',
+                                    username=user.username,
+                                    page=page_num) }}">
+
+                        {{ page_num }}
+
+                    </a>
+
+                {% endif %}
+
+            {% endif %}
+
+        {% endfor %}
+
+    </div>
+
+{% endif %}
+
+</section>
+
+{% endblock %}

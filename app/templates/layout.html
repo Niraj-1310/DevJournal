@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html 
+    lang="en" 
+    data-user-id="{{ current_user.id if current_user.is_authenticated else '' }}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>{% block title %}DevJournal{% endblock %}</title>
+        
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
+        <script>
+            (function () {
+                const userId =
+                    document.documentElement.dataset.userId;
+
+                if (!userId) {
+                    return;
+                }
+
+                const savedTheme =
+                    localStorage.getItem(
+                        "devjournal_theme_" + userId
+                    );
+
+                if (savedTheme === "dark") {
+                    document.documentElement.classList.add(
+                        "dark-mode"
+                    );
+                }
+            })();
+        </script>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+        <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+        
+    </head>
+    <body data-user-id="{{ current_user.id if current_user.is_authenticated else '' }}">
+        <nav class="navbar">
+
+            <!-- =====================================================
+                NAVBAR TOP
+            ====================================================== -->
+
+            <div class="nav-top">
+
+                <!-- Logo -->
+                <a href="{{ url_for('home') }}" class="logo">
+                    DevJournal
+                </a>
+
+
+                <!-- Desktop Navigation -->
+                <div class="desktop-nav">
+
+                    <a href="{{ url_for('home') }}">
+                        Home
+                    </a>
+
+                    <a href="{{ url_for('about') }}">
+                        About
+                    </a>
+
+                </div>
+
+
+                <!-- Right Actions -->
+                <div class="nav-actions">
+
+                    {% if current_user.is_authenticated %}
+
+                        <!-- Notifications -->
+                        <a
+                            href="{{ url_for('notifications') }}"
+                            class="notification-link"
+                            aria-label="Notifications"
+                        >
+
+                            <span class="notification-icon">
+                                🔔
+                            </span>
+
+                            {% if unread_notifications_count > 0 %}
+
+                                <span class="notification-badge">
+                                    {{ unread_notifications_count }}
+                                </span>
+
+                            {% endif %}
+
+                        </a>
+
+
+                        <!-- Menu Toggle -->
+                        <button
+                            type="button"
+                            id="menu-toggle"
+                            class="menu-toggle"
+                            aria-label="Open menu"
+                            aria-expanded="false"
+                        >
+
+                            <span></span>
+                            <span></span>
+                            <span></span>
+
+                        </button>
+
+                    {% else %}
+
+                        <!-- Login -->
+                        <a
+                            href="{{ url_for('login') }}"
+                            class="nav-login"
+                        >
+                            Login
+                        </a>
+
+
+                        <!-- Register -->
+                        <a
+                            href="{{ url_for('register') }}"
+                            class="nav-register"
+                        >
+                            Register
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                DESKTOP SEARCH
+            ====================================================== -->
+
+            <div class="nav-search desktop-search">
+
+                <form
+                    action="{{ url_for('search') }}"
+                    method="GET"
+                    class="search-form"
+                >
+
+                    <input
+                        type="text"
+                        name="q"
+                        class="search-input"
+                        placeholder="Search articles..."
+                        value="{{ request.args.get('q', '') }}"
+                        autocomplete="off"
+                    >
+
+                    <button
+                        type="submit"
+                        class="search-btn"
+                    >
+                        Search
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- =====================================================
+                USER DROPDOWN
+            ====================================================== -->
+
+            {% if current_user.is_authenticated %}
+
+            <div
+                id="nav-menu"
+                class="nav-menu"
+                aria-hidden="true"
+            >
+
+                <!-- User Header -->
+                <div class="menu-user">
+
+                    <div class="menu-avatar">
+                        {{ current_user.username[0]|upper }}
+                    </div>
+
+                    <div class="menu-user-info">
+
+                        <strong>
+                            {{ current_user.username }}
+                        </strong>
+
+                        <span>
+                            DevJournal account
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="menu-divider"></div>
+
+
+                <!-- Main Navigation -->
+                <div class="menu-section">
+
+                    <a
+                        href="{{ url_for('home') }}"
+                        class="menu-item"
+                    >
+                        <span class="menu-item-icon">🏠</span>
+                        <span>Home</span>
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('about') }}"
+                        class="menu-item"
+                    >
+                        <span class="menu-item-icon">ℹ️</span>
+                        <span>About</span>
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('new_post') }}"
+                        class="menu-item"
+                    >
+                        <span class="menu-item-icon">✏️</span>
+                        <span>New Post</span>
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('dashboard') }}"
+                        class="menu-item"
+                    >
+                        <span class="menu-item-icon">📊</span>
+                        <span>Dashboard</span>
+                    </a>
+
+                </div>
+
+
+                <div class="menu-divider"></div>
+
+
+                <!-- Theme -->
+                <div class="menu-section">
+
+                    <button
+                        type="button"
+                        id="theme-toggle"
+                        class="theme-toggle-row"
+                        aria-label="Toggle dark mode"
+                    >
+
+                        <span
+                            class="theme-toggle-label"
+                            id="theme-text"
+                        >
+                            Light Mode
+                        </span>
+
+                        <span
+                            class="theme-switch"
+                            id="theme-switch"
+                            aria-hidden="true"
+                        >
+
+                            <span
+                                class="theme-option theme-sun"
+                            >
+                                ☀️
+                            </span>
+
+                            <span
+                                class="theme-option theme-moon"
+                            >
+                                🌙
+                            </span>
+
+                            <span class="theme-switch-thumb"></span>
+
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+                <div class="menu-divider"></div>
+
+
+                <!-- Logout -->
+                <div class="menu-section">
+
+                    <form
+                        action="{{ url_for('logout') }}"
+                        method="POST"
+                    >
+
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+
+                        <button
+                            type="submit"
+                            class="menu-item menu-logout"
+                        >
+
+                            <span class="menu-item-icon">
+                                ➜]
+                            </span>
+
+                            <span>
+                                Logout
+                            </span>
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- =====================================================
+                MOBILE SEARCH
+            ====================================================== -->
+
+            <div class="mobile-search">
+
+                <form
+                    action="{{ url_for('search') }}"
+                    method="GET"
+                    class="search-form"
+                >
+
+                    <input
+                        type="text"
+                        name="q"
+                        class="search-input"
+                        placeholder="Search articles..."
+                        value="{{ request.args.get('q', '') }}"
+                        autocomplete="off"
+                    >
+
+                    <button
+                        type="submit"
+                        class="search-btn"
+                    >
+                        Search
+                    </button>
+
+                </form>
+
+            </div>
+
+        </nav>
+        
+        <main class="container">
+
+            <div class="toast-container">
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="toast toast-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+            </div>
+            
+            {% block content %}
+            {% endblock content %}
+
+        </main>
+
+        <footer class="site-footer">
+
+            <p>
+                © 2026 DevJournal • Built with ❤️ using Flask
+            </p>
+
+            <div class="footer-links">
+
+                <a href="{{ url_for('home') }}">Home</a>
+
+                <a href="{{ url_for('about') }}">About</a>
+
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}">Login</a>
+                {% endif %}
+
+            </div>
+
+        </footer>
+
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+    </body>
+</html>

@@ -1,0 +1,14 @@
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+
+# Flask instance folder / local database
+instance/
+
+# Environment variables
+.env
+
+# ZIP backup/archive
+*.zip

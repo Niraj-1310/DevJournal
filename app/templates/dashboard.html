@@ -1,0 +1,304 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Dashboard | DevJournal
+{% endblock %}
+
+{% block content %}
+
+<div class="back-button">
+    <a
+        href="{{
+            return_url
+            if (from_account or from_post)
+            else safe_referrer
+        }}"
+        class="back-arrow"
+        data-direct-back="{{
+            '1'
+            if (from_account or from_post)
+            else '0'
+        }}"
+        aria-label="Go back"
+    >
+        ←
+    </a>
+</div>
+
+<section class="account-section">
+
+    <h1 style="text-align:center; margin-bottom:25px;">
+        Welcome back, {{ current_user.username }} 👋
+    </h1>
+
+    <div style="text-align:center;">
+
+        <img
+            src="{{ image_file }}"
+            class="account-img"
+            alt="{{ current_user.username }}'s profile picture"
+        >
+
+        <h2 class="account-heading">
+            {{ current_user.username }}
+        </h2>
+
+        <p class="account-email">
+            {{ current_user.email }}
+        </p>
+
+        <p class="dashboard-meta">
+            Member since {{ current_user.date_joined.strftime('%B %d, %Y') if current_user.date_joined else 'Today' }}
+        </p>
+
+    </div>
+
+    <h2 style="margin:35px 0 20px; text-align:center;">
+        Your Activity
+    </h2>
+
+    <div class="dashboard-stats">
+
+        <div class="stat-card">
+            <h3>{{ total_posts }}</h3>
+            <p>Posts</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ total_likes }}</h3>
+            <p>Likes Received</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ total_comments }}</h3>
+            <p>Comments</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ total_views }}</h3>
+            <p>👁️ Total Views</p>
+        </div>
+
+    </div>
+
+    <div style="text-align:center; margin:35px 0;">
+
+        <a href="{{ url_for('new_post') }}" class="hero-btn">
+            ✍️ Create New Post
+        </a>
+
+        <a
+            href="{{ url_for(
+                'account',
+                from_dashboard='1',
+                return_url=(
+                    url_for('home')
+                    if from_post
+                    else (
+                        return_url
+                        if from_account
+                        else safe_referrer
+                    )
+                )
+            ) }}"
+            class="hero-btn secondary"
+        >
+            ⚙️ Edit Profile
+        </a>
+
+        <a href="{{ url_for('saved_posts') }}" class="hero-btn secondary">
+            📚 Saved Posts
+        </a>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <h2 style="margin-bottom:25px;">
+        Your Recent Posts
+    </h2>
+
+    {% for post in posts %}
+
+    <article class="post-card">
+
+        <a href="{{ url_for('category_posts', category=post.category) }}" class="post-category">
+            {{ post.category }}
+        </a>
+
+        <h3>
+            <a href="{{ url_for('post', post_id=post.id) }}"
+               class="post-title">
+
+                {{ post.title }}
+
+            </a>
+        </h3>
+
+        <p class="post-info">
+            {{ post.date_posted.strftime('%d %b %Y • %I:%M %p') }}
+        </p>
+
+        <p>
+            {{ post.content[:140] }}
+            {% if post.content|length > 140 %}...{% endif %}
+        </p>
+
+        <div class="dashboard-post-footer">
+
+    <div class="dashboard-post-stats">
+
+        {% if current_user.is_authenticated %}
+
+            <form
+                class="like-form"
+                action="{{ url_for('like_post', post_id=post.id) }}"
+                method="POST"
+            >
+                <button
+                    type="submit"
+                    class="inline-reaction-btn"
+                    aria-label="Like this post"
+                >
+                    <span class="heart-icon" aria-hidden="true">
+                        {% if post.likes
+                            |selectattr("user_id", "equalto", current_user.id)
+                            |list %}
+                            ❤️
+                        {% else %}
+                            🤍
+                        {% endif %}
+                    </span>
+
+                    <span class="like-count">
+                        {{ post.likes|length }}
+                    </span>
+                </button>
+            </form>
+
+        {% else %}
+
+            <span class="post-stat-link">
+                ❤️ {{ post.likes|length }}
+            </span>
+
+        {% endif %}
+
+
+        <a
+            href="{{ url_for('post', post_id=post.id) }}#comments"
+            class="post-stat-link"
+            aria-label="View {{ post.comments|length }} comments"
+        >
+            💬 {{ post.comments|length }}
+        </a>
+
+        <span class="post-stat-link">
+            👁️ {{ post.views }}
+        </span>
+
+    </div>
+
+    <div class="dashboard-post-buttons">
+
+        <a href="{{ url_for('post', post_id=post.id) }}"
+           class="read-more">
+
+            View
+
+        </a>
+
+        <a href="{{ url_for('edit_post', post_id=post.id, from_dashboard='1') }}"
+           class="read-more edit-post-link">
+
+            Edit
+
+        </a>
+
+    </div>
+
+</div>
+
+    </article>
+
+    {% else %}
+
+    <div class="post-card">
+
+        <h3>No posts yet.</h3>
+
+        <p>
+            Start sharing your knowledge with the DevJournal community.
+        </p>
+
+        <br>
+
+        <a href="{{ url_for('new_post') }}" class="hero-btn">
+            Create Your First Post
+        </a>
+
+    </div>
+
+    {% endfor %}
+
+    <hr class="section-divider">
+
+    <h2 style="margin-bottom:25px;">
+        Most Viewed Posts 👁️
+    </h2>
+
+    {% if top_viewed_posts %}
+
+    <div class="top-viewed-posts">
+
+        {% for post in top_viewed_posts %}
+
+        <div class="top-viewed-post">
+
+            <div class="top-viewed-post-info">
+
+                <a
+                    href="{{ url_for('post', post_id=post.id) }}"
+                    class="post-title"
+                >
+                    {{ post.title }}
+                </a>
+
+                <span>
+                    {{ post.views }} views
+                </span>
+
+            </div>
+
+            <a
+                href="{{ url_for('post', post_id=post.id) }}"
+                class="read-more"
+            >
+                View →
+            </a>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <p>No views yet. Publish a post and start sharing it!</p>
+
+    {% endif %}
+
+    {% if posts %}
+
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="{{ url_for('user_posts', username=current_user.username) }}" class="hero-btn secondary">
+            View All Posts
+        </a>
+    </div>
+
+    {% endif %}
+    
+</section>
+
+{% endblock %}

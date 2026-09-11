@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+
+{% block title %}Register | DevJournal{% endblock title %}
+
+{% block content %}
+
+<div class="form-container">
+
+    <h2>Create an Account</h2>
+
+    <p class="form-subtitle">
+        Join DevJournal and start sharing your ideas.
+    </p>
+
+    <form method="POST" action="">
+
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+
+            {{ form.username.label }}
+
+            {{ form.username(
+                class="form-control",
+                placeholder="Enter your username"
+            ) }}
+
+            {% for error in form.username.errors %}
+                <small class="form-error">
+                    {{ error }}
+                </small>
+            {% endfor %}
+
+        </div>
+
+
+        <div class="form-group">
+
+            {{ form.email.label }}
+
+            {{ form.email(
+                class="form-control",
+                placeholder="Enter your email"
+            ) }}
+
+            {% for error in form.email.errors %}
+                <small class="form-error">
+                    {{ error }}
+                </small>
+            {% endfor %}
+
+        </div>
+
+
+        <div class="form-group">
+
+            {{ form.password.label }}
+
+            {{ form.password(
+                class="form-control",
+                placeholder="Create a password"
+            ) }}
+
+            {% for error in form.password.errors %}
+                <small class="form-error">
+                    {{ error }}
+                </small>
+            {% endfor %}
+
+        </div>
+
+
+        <div class="form-group">
+
+            {{ form.confirm_password.label }}
+
+            {{ form.confirm_password(
+                class="form-control",
+                placeholder="Confirm your password"
+            ) }}
+
+            {% for error in form.confirm_password.errors %}
+                <small class="form-error">
+                    {{ error }}
+                </small>
+            {% endfor %}
+
+        </div>
+
+
+        <div class="form-group">
+
+            {{ form.submit(class="form-btn") }}
+
+        </div>
+
+    </form>
+
+
+    <p class="auth-link">
+        Already have an account?
+        <a href="{{ url_for('login') }}">
+            Login
+        </a>
+    </p>
+
+</div>
+
+{% endblock content %}

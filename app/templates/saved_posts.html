@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Saved Posts
+{% endblock %}
+
+{% block content %}
+
+<div class="back-button">
+    <a href="{{ request.referrer or url_for('home') }}" class="back-arrow">
+        ←
+    </a>
+</div>
+
+<section class="account-section">
+
+    <h1 style="text-align:center; margin-bottom:30px;">
+        📚 Saved Posts
+    </h1>
+
+    {% for item in saved %}
+
+    <article class="post-card">
+
+        <a href="{{ url_for('category_posts', category=item.post.category) }}"
+           class="post-category">
+            {{ item.post.category }}
+        </a>
+
+        <h3>
+            <a href="{{ url_for('post', post_id=item.post.id) }}"
+               class="post-title">
+                {{ item.post.title }}
+            </a>
+        </h3>
+
+        <p class="post-info">
+
+            By
+
+            <a href="{{ url_for('user_posts', username=item.post.author.username) }}">
+                {{ item.post.author.username }}
+            </a>
+
+            •
+
+            {{ item.post.date_posted.strftime("%d %b %Y") }}
+
+        </p>
+
+        <p>
+            {{ item.post.content[:180] }}
+
+            {% if item.post.content|length > 180 %}
+                ...
+            {% endif %}
+        </p>
+
+        <div class="post-footer">
+
+            <a href="{{ url_for('post', post_id=item.post.id) }}"
+               class="read-more">
+                Read More →
+            </a>
+
+        </div>
+
+    </article>
+
+    {% else %}
+
+    <div class="post-card">
+
+        <h3>No saved posts yet.</h3>
+
+        <p>
+            Save interesting articles and they'll appear here.
+        </p>
+
+    </div>
+
+    {% endfor %}
+
+</section>
+
+{% endblock %}
