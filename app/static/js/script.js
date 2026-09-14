@@ -1,923 +1,1387 @@
-// ========================================
+// ============================================================
 // DevJournal - Main JavaScript
-// ========================================
+// ============================================================
+
+"use strict";
 
 
-// ========================================
-// LIKE SYSTEM
-// ========================================
+// ============================================================
+// CSRF TOKEN
+// ============================================================
 
-document.addEventListener("DOMContentLoaded", function () {
+function getCSRFToken() {
 
-    document.querySelectorAll(".like-form").forEach(form => {
+    const meta = document.querySelector(
+        'meta[name="csrf-token"]'
+    );
 
-        form.addEventListener("submit", function (e) {
+    if (meta) {
+        return meta.getAttribute("content");
+    }
 
-            e.preventDefault();
+    const input = document.querySelector(
+        'input[name="csrf_token"]'
+    );
 
-            fetch(form.action, {
-                method: "POST",
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
+    if (input) {
+        return input.value;
+    }
 
-                const heartIcon = form.querySelector(".heart-icon");
-                const likeCount = form.querySelector(".like-count");
-
-                if (heartIcon) {
-                    heartIcon.textContent =
-                        data.liked ? "❤️" : "🤍";
-                }
-
-                if (likeCount) {
-                    likeCount.textContent = data.likes;
-                }
-
-            })
-            .catch(error => {
-                console.error("Like error:", error);
-            });
-
-        });
-
-    });
-
-});
+    return null;
+}
 
 
-// ========================================
-// SAVE SYSTEM
-// ========================================
+// ============================================================
+// TOAST SYSTEM
+// ============================================================
 
-document.addEventListener("DOMContentLoaded", function () {
+function showToast(message, category = "info") {
 
-    document.querySelectorAll(".save-form").forEach(form => {
+    if (!message) {
+        return;
+    }
 
-        form.addEventListener("submit", function (e) {
+    let container =
+        document.querySelector(".toast-container");
 
-            e.preventDefault();
+    if (!container) {
 
-            fetch(form.action, {
-                method: "POST",
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
+        container = document.createElement("div");
 
-                const saveText =
-                    form.querySelector(".save-text");
+        container.className =
+            "toast-container";
 
-                if (saveText) {
-                    saveText.textContent =
-                        data.saved ? "🔖 Saved" : "📑 Save";
-                }
+        document.body.appendChild(container);
+    }
 
-            })
-            .catch(error => {
-                console.error("Save error:", error);
-            });
+    const toast =
+        document.createElement("div");
 
-        });
+    toast.className =
+        `toast toast-${category}`;
+
+    toast.textContent =
+        message;
+
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => {
+
+        toast.classList.add("show");
 
     });
 
-});
+    setTimeout(() => {
 
-
-// ========================================
-// TOAST NOTIFICATIONS
-// ========================================
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    document.querySelectorAll(".toast").forEach(toast => {
+        toast.classList.remove("show");
 
         setTimeout(() => {
 
-            toast.style.opacity = "0";
-            toast.style.transform = "translateX(-10px)";
+            toast.remove();
 
-            setTimeout(() => {
-                toast.remove();
-            }, 300);
+        }, 300);
 
-        }, 3000);
+    }, 3000);
+}
 
+
+// ============================================================
+// SAFE AJAX FETCH
+// ============================================================
+
+async function djFetch(url, options = {}) {
+
+    const csrfToken =
+        getCSRFToken();
+
+    const headers = {
+        "X-Requested-With": "XMLHttpRequest",
+        ...(options.headers || {})
+    };
+
+    const method =
+        (options.method || "GET").toUpperCase();
+
+    if (
+        csrfToken &&
+        method !== "GET" &&
+        method !== "HEAD"
+    ) {
+
+        headers["X-CSRFToken"] =
+            csrfToken;
+    }
+
+    const response =
+        await fetch(url, {
+            ...options,
+            headers
+        });
+
+    const contentType =
+        response.headers.get(
+            "content-type"
+        ) || "";
+
+    let data;
+
+    if (
+        contentType.includes(
+            "application/json"
+        )
+    ) {
+
+        data =
+            await response.json();
+
+    } else {
+
+        const text =
+            await response.text();
+
+        try {
+
+            data =
+                JSON.parse(text);
+
+        } catch {
+
+            data = {
+                success: response.ok,
+                message: text
+            };
+        }
+    }
+
+    if (!response.ok) {
+
+        throw new Error(
+            data?.message ||
+            data?.error ||
+            `Request failed with status ${response.status}`
+        );
+    }
+
+    return data;
+}
+
+
+// ============================================================
+// LIKE SYSTEM
+// ============================================================
+
+function initializeLikeSystem() {
+
+    document.querySelectorAll(
+        ".like-form"
+    ).forEach(form => {
+
+        if (
+            form.dataset.likeInitialized === "true"
+        ) {
+            return;
+        }
+
+        form.dataset.likeInitialized =
+            "true";
+
+        form.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+                const button =
+                    form.querySelector(
+                        "button[type='submit']"
+                    ) ||
+                    form.querySelector(
+                        "button"
+                    );
+
+                if (!button) {
+                    return;
+                }
+
+                if (button.disabled) {
+                    return;
+                }
+
+                const heartIcon =
+                    form.querySelector(
+                        ".heart-icon"
+                    ) ||
+                    form.querySelector(
+                        ".like-icon"
+                    );
+
+                const likeCount =
+                    form.querySelector(
+                        ".like-count"
+                    );
+
+                button.disabled =
+                    true;
+
+                try {
+
+                    const data =
+                        await djFetch(
+                            form.action,
+                            {
+                                method: "POST"
+                            }
+                        );
+
+                    if (
+                        data.success === false ||
+                        data.error
+                    ) {
+
+                        throw new Error(
+                            data.message ||
+                            data.error ||
+                            "Unable to update like."
+                        );
+                    }
+
+                    const newCount =
+                        data.likes ??
+                        data.like_count ??
+                        data.count;
+
+                    if (
+                        likeCount &&
+                        newCount !== undefined &&
+                        newCount !== null
+                    ) {
+
+                        likeCount.textContent =
+                            newCount;
+                    }
+
+                    const liked =
+                        data.liked ??
+                        data.is_liked ??
+                        data.status === "liked";
+
+                    if (heartIcon) {
+
+                        heartIcon.textContent =
+                            liked
+                                ? "❤️"
+                                : "🤍";
+                    }
+
+                    form.classList.toggle(
+                        "liked",
+                        liked
+                    );
+
+                    button.classList.toggle(
+                        "liked",
+                        liked
+                    );
+
+                    if (data.message) {
+
+                        showToast(
+                            data.message,
+                            "success"
+                        );
+                    }
+
+                } catch (error) {
+
+                    showToast(
+                        error.message ||
+                        "Something went wrong while liking the post.",
+                        "error"
+                    );
+
+                } finally {
+
+                    button.disabled =
+                        false;
+                }
+            }
+        );
     });
+}
 
-});
 
-// ==========================================
+// ============================================================
+// SAVE SYSTEM
+// ============================================================
+
+function initializeSaveSystem() {
+
+    document.querySelectorAll(
+        ".save-form"
+    ).forEach(form => {
+
+        if (
+            form.dataset.saveInitialized === "true"
+        ) {
+            return;
+        }
+
+        form.dataset.saveInitialized =
+            "true";
+
+        form.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+                const button =
+                    form.querySelector(
+                        "button[type='submit']"
+                    ) ||
+                    form.querySelector(
+                        "button"
+                    );
+
+                if (!button) {
+                    return;
+                }
+
+                if (button.disabled) {
+                    return;
+                }
+
+                const saveText =
+                    form.querySelector(
+                        ".save-text"
+                    );
+
+                const saveIcon =
+                    form.querySelector(
+                        ".save-icon"
+                    );
+
+                button.disabled =
+                    true;
+
+                try {
+
+                    const data =
+                        await djFetch(
+                            form.action,
+                            {
+                                method: "POST"
+                            }
+                        );
+
+                    if (
+                        data.success === false ||
+                        data.error
+                    ) {
+
+                        throw new Error(
+                            data.message ||
+                            data.error ||
+                            "Unable to update saved post."
+                        );
+                    }
+
+                    const saved =
+                        data.saved ??
+                        data.is_saved ??
+                        data.status === "saved";
+
+                    if (saveText) {
+
+                        saveText.textContent =
+                            saved
+                                ? "🔖 Saved"
+                                : "📑 Save";
+                    }
+
+                    form.classList.toggle(
+                        "saved",
+                        saved
+                    );
+
+                    button.classList.toggle(
+                        "saved",
+                        saved
+                    );
+
+                    if (saveIcon) {
+
+                        saveIcon.classList.toggle(
+                            "saved",
+                            saved
+                        );
+                    }
+
+                    if (data.message) {
+
+                        showToast(
+                            data.message,
+                            "success"
+                        );
+                    }
+
+                } catch (error) {
+
+                    showToast(
+                        error.message ||
+                        "Something went wrong while saving the post.",
+                        "error"
+                    );
+
+                } finally {
+
+                    button.disabled =
+                        false;
+                }
+            }
+        );
+    });
+}
+
+
+// ============================================================
 // BACK BUTTON
-// ==========================================
+// ============================================================
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    const backButton =
-        document.querySelector(".back-arrow");
+        const backButton =
+            document.querySelector(
+                ".back-arrow"
+            );
 
-    if (!backButton) {
-        return;
-    }
-
-    backButton.addEventListener("click", function (e) {
-
-        const directBack =
-            backButton.dataset.directBack === "1";
-
-        if (directBack) {
-            e.preventDefault();
-            window.location.href = backButton.href;
+        if (!backButton) {
             return;
         }
 
-        const editReturnUrl =
+        backButton.addEventListener(
+            "click",
+            function (event) {
+
+                const directBack =
+                    backButton.dataset.directBack === "1";
+
+                if (directBack) {
+
+                    event.preventDefault();
+
+                    window.location.href =
+                        backButton.href;
+
+                    return;
+                }
+
+                const editReturnUrl =
+                    sessionStorage.getItem(
+                        "devjournal_edit_return_url"
+                    );
+
+                if (editReturnUrl) {
+
+                    event.preventDefault();
+
+                    sessionStorage.setItem(
+                        "devjournal_edit_restore_scroll",
+                        sessionStorage.getItem(
+                            "devjournal_edit_return_scroll"
+                        ) || "0"
+                    );
+
+                    sessionStorage.removeItem(
+                        "devjournal_edit_return_url"
+                    );
+
+                    sessionStorage.removeItem(
+                        "devjournal_edit_return_scroll"
+                    );
+
+                    window.location.href =
+                        editReturnUrl;
+
+                    return;
+                }
+
+                if (window.history.length > 1) {
+
+                    event.preventDefault();
+
+                    window.history.back();
+                }
+            }
+        );
+    }
+);
+
+
+// ============================================================
+// PAGE-SPECIFIC SCROLL RESTORE
+// ============================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        if ("scrollRestoration" in history) {
+
+            history.scrollRestoration =
+                "manual";
+        }
+
+        const pageKey =
+            "devjournal_scroll_" +
+            window.location.pathname +
+            window.location.search;
+
+        const savedScroll =
             sessionStorage.getItem(
-                "devjournal_edit_return_url"
+                pageKey
             );
 
-        if (editReturnUrl) {
-            e.preventDefault();
-
-            sessionStorage.setItem(
-                "devjournal_edit_restore_scroll",
-                sessionStorage.getItem(
-                    "devjournal_edit_return_scroll"
-                ) || "0"
-            );
-
-            sessionStorage.removeItem(
-                "devjournal_edit_return_url"
-            );
-
-            sessionStorage.removeItem(
-                "devjournal_edit_return_scroll"
-            );
-
-            window.location.href = editReturnUrl;
+        if (
+            window.location.hash ===
+            "#comments"
+        ) {
             return;
         }
 
-        if (window.history.length > 1) {
-            e.preventDefault();
-            window.history.back();
+        if (savedScroll === null) {
+            return;
         }
 
-    });
+        const navigationEntry =
+            performance.getEntriesByType(
+                "navigation"
+            )[0];
 
-});
+        const navigationType =
+            navigationEntry
+                ? navigationEntry.type
+                : "navigate";
 
-// ==========================================
-// DEVJOURNAL — PAGE-SPECIFIC SCROLL RESTORE
-// ==========================================
+        if (
+            navigationType === "reload"
+        ) {
 
-document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(function () {
 
-    if ("scrollRestoration" in history) {
-        history.scrollRestoration = "manual";
-    }
+                window.scrollTo({
+                    top: parseInt(
+                        savedScroll,
+                        10
+                    ),
+                    behavior: "smooth"
+                });
 
-    const pageKey =
-        "devjournal_scroll_" +
-        window.location.pathname +
-        window.location.search;
+                sessionStorage.removeItem(
+                    pageKey
+                );
 
-    const savedScroll =
-        sessionStorage.getItem(pageKey);
+            }, 150);
 
-    if (window.location.hash === "#comments") {
-        return;
-    }
-
-    if (savedScroll === null) {
-        return;
-    }
-
-    const navigationEntry =
-        performance.getEntriesByType("navigation")[0];
-
-    const navigationType =
-        navigationEntry
-            ? navigationEntry.type
-            : "navigate";
-
-    // Restore after a page refresh.
-    if (navigationType === "reload") {
+            return;
+        }
 
         setTimeout(function () {
 
             window.scrollTo({
-                top: parseInt(savedScroll, 10),
+                top: parseInt(
+                    savedScroll,
+                    10
+                ),
                 behavior: "smooth"
             });
 
-            sessionStorage.removeItem(pageKey);
+            sessionStorage.removeItem(
+                pageKey
+            );
 
         }, 150);
-
-        return;
     }
-
-    // Restore after normal Back/Forward navigation.
-    setTimeout(function () {
-
-        window.scrollTo({
-            top: parseInt(savedScroll, 10),
-            behavior: "smooth"
-        });
-
-        sessionStorage.removeItem(pageKey);
-
-    }, 150);
-
-});
-
-// ==========================================
-// DEVJOURNAL — SAVE SCROLL FOR REFRESH
-// ==========================================
-
-window.addEventListener("beforeunload", function () {
-
-    const pageKey =
-        "devjournal_scroll_" +
-        window.location.pathname +
-        window.location.search;
-
-    sessionStorage.setItem(
-        pageKey,
-        window.scrollY
-    );
-
-});
-
-// ==========================================
-// DEVJOURNAL — RETURN TO COMMENTS AFTER ACTION
-// ==========================================
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    // Comment submission
-    const commentForm =
-        document.getElementById("comment-form");
-
-    if (commentForm) {
-
-        commentForm.addEventListener("submit", function () {
-
-            sessionStorage.setItem(
-                "devjournal_return_comments",
-                "true"
-            );
-
-        });
-
-    }
+);
 
 
-    // Edit comment
-    document.querySelectorAll(
-        ".comment-actions .edit-btn"
-    ).forEach(link => {
+// ============================================================
+// SAVE SCROLL FOR REFRESH
+// ============================================================
 
-        link.addEventListener("click", function () {
+window.addEventListener(
+    "beforeunload",
+    function () {
 
-            sessionStorage.setItem(
-                "devjournal_return_comments",
-                "true"
-            );
+        const pageKey =
+            "devjournal_scroll_" +
+            window.location.pathname +
+            window.location.search;
 
-        });
-
-    });
-
-
-    // Delete comment
-    document.querySelectorAll(
-        ".comment-actions form"
-    ).forEach(form => {
-
-        form.addEventListener("submit", function () {
-
-            sessionStorage.setItem(
-                "devjournal_return_comments",
-                "true"
-            );
-
-        });
-
-    });
-
-});
-
-// ==========================================
-// RESTORE COMMENTS AFTER COMMENT ACTION
-// ==========================================
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    const fromCommentEdit =
-        new URLSearchParams(window.location.search)
-            .get("from_comment_edit");
-
-    if (fromCommentEdit === "1") {
         sessionStorage.setItem(
-            "devjournal_return_comments",
-            "true"
+            pageKey,
+            window.scrollY
         );
     }
+);
 
-    const shouldReturn =
-        sessionStorage.getItem(
-            "devjournal_return_comments"
-        );
 
-    const commentsSection =
-        document.getElementById("comments");
+// ============================================================
+// RETURN TO COMMENTS AFTER ACTION
+// ============================================================
 
-    if (
-        shouldReturn !== "true" ||
-        !commentsSection
-    ) {
-        return;
-    }
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    setTimeout(function () {
-
-        commentsSection.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-
-        sessionStorage.removeItem(
-            "devjournal_return_comments"
-        );
-
-    }, 150);
-
-});
-
-// ==========================================
-// NAVIGATION — HOME PAGINATION
-// ==========================================
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    const isHomePage =
-        window.location.pathname === "/" ||
-        window.location.pathname === "/home";
-
-    if (!isHomePage) {
-        return;
-    }
-
-    document.querySelectorAll(
-        '.pagination a'
-    ).forEach(link => {
-
-        link.addEventListener("click", function () {
-
-            sessionStorage.setItem(
-                "devjournal_pagination_scroll",
-                "posts"
+        const commentForm =
+            document.getElementById(
+                "comment-form"
             );
 
-        });
+        if (commentForm) {
 
-    });
+            commentForm.addEventListener(
+                "submit",
+                function () {
 
-});
-
-// ==========================================
-// NAVIGATION — RESTORE AFTER PAGINATION
-// ==========================================
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    const shouldRestore =
-        sessionStorage.getItem(
-            "devjournal_pagination_scroll"
-        );
-
-    if (shouldRestore !== "posts") {
-        return;
-    }
-
-    const postsSection =
-        document.querySelector(".posts");
-
-    if (!postsSection) {
-        return;
-    }
-
-    setTimeout(function () {
-
-        postsSection.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-
-        sessionStorage.removeItem(
-            "devjournal_pagination_scroll"
-        );
-
-    }, 150);
-
-});
-
-// ==========================================
-// PROFILE PICTURE — SHOW SELECTED FILE
-// ==========================================
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    const fileInput =
-        document.querySelector(".profile-file-input");
-
-    const fileLabel =
-        document.querySelector(".custom-file-label");
-
-    if (!fileInput || !fileLabel) {
-        return;
-    }
-
-    fileInput.addEventListener("change", function () {
-
-        if (this.files && this.files.length > 0) {
-
-            const fileName = this.files[0].name;
-
-            fileLabel.textContent =
-                "📷 " + fileName;
-
-            fileLabel.classList.add("file-selected");
-
-        } else {
-
-            fileLabel.textContent =
-                "📷 Choose Profile Picture";
-
-            fileLabel.classList.remove("file-selected");
-
+                    sessionStorage.setItem(
+                        "devjournal_return_comments",
+                        "true"
+                    );
+                }
+            );
         }
 
-    });
+        document.querySelectorAll(
+            ".comment-actions .edit-btn"
+        ).forEach(link => {
 
-});
+            link.addEventListener(
+                "click",
+                function () {
 
-// ==========================================
-// DEVJOURNAL — DARK MODE
-// ==========================================
+                    sessionStorage.setItem(
+                        "devjournal_return_comments",
+                        "true"
+                    );
+                }
+            );
+        });
 
-document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(
+            ".comment-actions form"
+        ).forEach(form => {
 
-    const themeToggle =
-        document.getElementById("theme-toggle");
+            form.addEventListener(
+                "submit",
+                function () {
 
-    const themeText =
-        document.getElementById("theme-text");
-
-    if (!themeToggle) {
-        return;
+                    sessionStorage.setItem(
+                        "devjournal_return_comments",
+                        "true"
+                    );
+                }
+            );
+        });
     }
+);
 
 
-    // ------------------------------------------
-    // Logged-in user detection
-    // ------------------------------------------
+// ============================================================
+// RESTORE COMMENTS
+// ============================================================
 
-    const userId =
-        document.body.dataset.userId || null;
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    const isLoggedIn =
-        userId !== null && userId !== "";
+        const fromCommentEdit =
+            new URLSearchParams(
+                window.location.search
+            ).get(
+                "from_comment_edit"
+            );
 
+        if (
+            fromCommentEdit === "1"
+        ) {
 
-    // ------------------------------------------
-    // User-specific storage key
-    // ------------------------------------------
-
-    const themeStorageKey =
-        isLoggedIn
-            ? `devjournal_theme_${userId}`
-            : null;
-
-
-    // ------------------------------------------
-    // Update theme UI
-    // ------------------------------------------
-
-    function updateThemeUI(isDark) {
-
-        if (themeText) {
-            themeText.textContent =
-                isDark ? "Dark Mode" : "Light Mode";
+            sessionStorage.setItem(
+                "devjournal_return_comments",
+                "true"
+            );
         }
 
-        themeToggle.setAttribute(
-            "aria-label",
-            isDark
-                ? "Switch to light mode"
-                : "Switch to dark mode"
+        const shouldReturn =
+            sessionStorage.getItem(
+                "devjournal_return_comments"
+            );
+
+        const commentsSection =
+            document.getElementById(
+                "comments"
+            );
+
+        if (
+            shouldReturn !== "true" ||
+            !commentsSection
+        ) {
+            return;
+        }
+
+        setTimeout(function () {
+
+            commentsSection.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+            sessionStorage.removeItem(
+                "devjournal_return_comments"
+            );
+
+        }, 150);
+    }
+);
+
+
+// ============================================================
+// HOME PAGINATION
+// ============================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const isHomePage =
+            window.location.pathname === "/" ||
+            window.location.pathname === "/home";
+
+        if (!isHomePage) {
+            return;
+        }
+
+        document.querySelectorAll(
+            ".pagination a"
+        ).forEach(link => {
+
+            link.addEventListener(
+                "click",
+                function () {
+
+                    sessionStorage.setItem(
+                        "devjournal_pagination_scroll",
+                        "posts"
+                    );
+                }
+            );
+        });
+    }
+);
+
+
+// ============================================================
+// RESTORE AFTER PAGINATION
+// ============================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const shouldRestore =
+            sessionStorage.getItem(
+                "devjournal_pagination_scroll"
+            );
+
+        if (
+            shouldRestore !== "posts"
+        ) {
+            return;
+        }
+
+        const postsSection =
+            document.querySelector(
+                ".posts"
+            );
+
+        if (!postsSection) {
+            return;
+        }
+
+        setTimeout(function () {
+
+            postsSection.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+            sessionStorage.removeItem(
+                "devjournal_pagination_scroll"
+            );
+
+        }, 150);
+    }
+);
+
+
+// ============================================================
+// PROFILE PICTURE
+// ============================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const fileInput =
+            document.querySelector(
+                ".profile-file-input"
+            );
+
+        const fileLabel =
+            document.querySelector(
+                ".custom-file-label"
+            );
+
+        if (
+            !fileInput ||
+            !fileLabel
+        ) {
+            return;
+        }
+
+        fileInput.addEventListener(
+            "change",
+            function () {
+
+                if (
+                    this.files &&
+                    this.files.length > 0
+                ) {
+
+                    fileLabel.textContent =
+                        "📷 " +
+                        this.files[0].name;
+
+                    fileLabel.classList.add(
+                        "file-selected"
+                    );
+
+                } else {
+
+                    fileLabel.textContent =
+                        "📷 Choose Profile Picture";
+
+                    fileLabel.classList.remove(
+                        "file-selected"
+                    );
+                }
+            }
         );
     }
+);
 
 
-    // ------------------------------------------
-    // Apply theme
-    // ------------------------------------------
+// ============================================================
+// DARK MODE
+// ============================================================
 
-    function applyTheme(isDark) {
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-        document.documentElement.classList.toggle(
-            "dark-mode",
-            isDark
-        );
+        const themeToggle =
+            document.getElementById(
+                "theme-toggle"
+            );
 
-        document.body.classList.toggle(
-            "dark-mode",
-            isDark
-        );
+        const themeText =
+            document.getElementById(
+                "theme-text"
+            );
 
-        updateThemeUI(isDark);
-    }
+        if (!themeToggle) {
+            return;
+        }
 
+        const userId =
+            document.body.dataset.userId ||
+            null;
 
-    // ------------------------------------------
-    // Restore saved theme
-    // ------------------------------------------
+        const isLoggedIn =
+            userId !== null &&
+            userId !== "";
 
-    let isDark = false;
-
-    if (isLoggedIn) {
-
-        const savedTheme =
-            localStorage.getItem(themeStorageKey);
-
-        isDark =
-            savedTheme === "dark";
-    }
-
-    // Logged-out users ALWAYS start in light mode.
-    // Logged-in users get their own saved preference.
-
-    applyTheme(isDark);
+        const themeStorageKey =
+            isLoggedIn
+                ? `devjournal_theme_${userId}`
+                : null;
 
 
-    // ------------------------------------------
-    // Toggle theme
-    // ------------------------------------------
+        function updateThemeUI(isDark) {
 
-    themeToggle.addEventListener(
-        "click",
-        function (event) {
+            if (themeText) {
 
-            event.preventDefault();
-            event.stopPropagation();
+                themeText.textContent =
+                    isDark
+                        ? "Dark Mode"
+                        : "Light Mode";
+            }
+
+            themeToggle.setAttribute(
+                "aria-label",
+                isDark
+                    ? "Switch to light mode"
+                    : "Switch to dark mode"
+            );
+        }
 
 
-            const newDarkMode =
-                !document.documentElement.classList.contains(
-                    "dark-mode"
+        function applyTheme(isDark) {
+
+            document.documentElement.classList.toggle(
+                "dark-mode",
+                isDark
+            );
+
+            document.body.classList.toggle(
+                "dark-mode",
+                isDark
+            );
+
+            updateThemeUI(
+                isDark
+            );
+        }
+
+
+        let isDark = false;
+
+        if (isLoggedIn) {
+
+            const savedTheme =
+                localStorage.getItem(
+                    themeStorageKey
                 );
 
+            isDark =
+                savedTheme === "dark";
+        }
 
-            // Apply theme
+        applyTheme(
+            isDark
+        );
 
-            applyTheme(newDarkMode);
+
+        if (
+            themeToggle.dataset.themeInitialized ===
+            "true"
+        ) {
+            return;
+        }
+
+        themeToggle.dataset.themeInitialized =
+            "true";
 
 
-            // Save preference ONLY for logged-in users
+        themeToggle.addEventListener(
+            "click",
+            function (event) {
 
-            if (isLoggedIn) {
+                event.preventDefault();
+                event.stopPropagation();
 
-                localStorage.setItem(
-                    themeStorageKey,
+                const newDarkMode =
+                    !document.documentElement.classList.contains(
+                        "dark-mode"
+                    );
+
+                applyTheme(
                     newDarkMode
-                        ? "dark"
-                        : "light"
                 );
+
+                if (isLoggedIn) {
+
+                    localStorage.setItem(
+                        themeStorageKey,
+                        newDarkMode
+                            ? "dark"
+                            : "light"
+                    );
+                }
             }
+        );
+    }
+);
 
-        }
-    );
 
-});
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
 
-/* =========================================================
-   NOTIFICATIONS
-   ========================================================= */
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(
+            ".mark-read"
+        ).forEach(button => {
 
-    // Mark individual notification as read
-    document.querySelectorAll(".mark-read").forEach(button => {
+            button.addEventListener(
+                "click",
+                async function () {
 
-        button.addEventListener("click", async () => {
+                    const notificationId =
+                        button.dataset.notificationId;
 
-            const notificationId = button.dataset.notificationId;
+                    try {
 
-            try {
-                const response = await fetch(
-                    `/notifications/${notificationId}/read`,
-                    {
-                        method: "POST",
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest"
+                        const data =
+                            await djFetch(
+                                `/notifications/${notificationId}/read`,
+                                {
+                                    method: "POST"
+                                }
+                            );
+
+                        if (
+                            !data.success
+                        ) {
+                            return;
                         }
+
+                        const notification =
+                            document.querySelector(
+                                `.notification-item[data-notification-id="${notificationId}"]`
+                            );
+
+                        if (notification) {
+
+                            notification.classList.remove(
+                                "unread"
+                            );
+                        }
+
+                        button.remove();
+
+                    } catch (error) {
+
+                        showToast(
+                            error.message ||
+                            "Unable to mark notification as read.",
+                            "error"
+                        );
                     }
-                );
-
-                const data = await response.json();
-
-                if (!data.success) {
-                    return;
                 }
-
-                const notification = document.querySelector(
-                    `.notification-item[data-notification-id="${notificationId}"]`
-                );
-
-                if (notification) {
-                    notification.classList.remove("unread");
-                }
-
-                button.remove();
-
-            } catch (error) {
-                console.error(
-                    "Error marking notification as read:",
-                    error
-                );
-            }
+            );
         });
 
-    });
 
+        const markAllButton =
+            document.getElementById(
+                "mark-all-read"
+            );
 
-    // Mark all notifications as read
-    const markAllButton = document.getElementById("mark-all-read");
+        if (!markAllButton) {
+            return;
+        }
 
-    if (markAllButton) {
+        markAllButton.addEventListener(
+            "click",
+            async function () {
 
-        markAllButton.addEventListener("click", async () => {
+                try {
 
-            try {
-                const response = await fetch(
-                    "/notifications/read-all",
-                    {
-                        method: "POST",
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest"
-                        }
+                    const data =
+                        await djFetch(
+                            "/notifications/read-all",
+                            {
+                                method: "POST"
+                            }
+                        );
+
+                    if (
+                        !data.success
+                    ) {
+                        return;
                     }
-                );
 
-                const data = await response.json();
+                    document.querySelectorAll(
+                        ".notification-item.unread"
+                    ).forEach(notification => {
 
-                if (!data.success) {
-                    return;
-                }
-
-                document
-                    .querySelectorAll(".notification-item.unread")
-                    .forEach(notification => {
-                        notification.classList.remove("unread");
+                        notification.classList.remove(
+                            "unread"
+                        );
                     });
 
-                document
-                    .querySelectorAll(".mark-read")
-                    .forEach(button => {
+                    document.querySelectorAll(
+                        ".mark-read"
+                    ).forEach(button => {
+
                         button.remove();
                     });
 
-                markAllButton.remove();
+                    markAllButton.remove();
 
-            } catch (error) {
-                console.error(
-                    "Error marking all notifications as read:",
-                    error
-                );
+                } catch (error) {
+
+                    showToast(
+                        error.message ||
+                        "Unable to mark notifications as read.",
+                        "error"
+                    );
+                }
             }
-
-        });
-
+        );
     }
+);
 
-});
 
-/* =========================================================
-   LIVE NOTIFICATION COUNT
-   ========================================================= */
+// ============================================================
+// LIVE NOTIFICATION COUNT
+// ============================================================
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    const notificationLink =
-        document.querySelector(".notification-link");
-
-    if (!notificationLink) {
-        return;
-    }
-
-    async function updateNotificationCount() {
-
-        try {
-            const response = await fetch(
-                "/notifications/count"
+        const notificationLink =
+            document.querySelector(
+                ".notification-link"
             );
 
-            if (!response.ok) {
-                return;
-            }
+        if (!notificationLink) {
+            return;
+        }
 
-            const data = await response.json();
 
-            let badge =
-                notificationLink.querySelector(
-                    ".notification-badge"
-                );
+        async function updateNotificationCount() {
 
-            if (data.count > 0) {
+            try {
 
-                if (!badge) {
-                    badge = document.createElement("span");
+                const response =
+                    await fetch(
+                        "/notifications/count"
+                    );
 
-                    badge.className =
-                        "notification-badge";
-
-                    notificationLink.appendChild(badge);
+                if (!response.ok) {
+                    return;
                 }
 
-                badge.textContent = data.count;
+                const data =
+                    await response.json();
 
-            } else if (badge) {
+                let badge =
+                    notificationLink.querySelector(
+                        ".notification-badge"
+                    );
 
-                badge.remove();
+                if (
+                    data.count > 0
+                ) {
+
+                    if (!badge) {
+
+                        badge =
+                            document.createElement(
+                                "span"
+                            );
+
+                        badge.className =
+                            "notification-badge";
+
+                        notificationLink.appendChild(
+                            badge
+                        );
+                    }
+
+                    badge.textContent =
+                        data.count;
+
+                } else if (badge) {
+
+                    badge.remove();
+                }
+
+            } catch (error) {
+
+                // Intentionally silent.
             }
+        }
 
-        } catch (error) {
-            console.error(
-                "Error updating notification count:",
-                error
+        updateNotificationCount();
+
+        setInterval(
+            updateNotificationCount,
+            10000
+        );
+    }
+);
+
+
+// ============================================================
+// NAVIGATION MENU
+// Uses .open to match your existing CSS
+// ============================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const menuToggle =
+            document.getElementById(
+                "menu-toggle"
             );
-        }
-    }
 
-    updateNotificationCount();
-
-    setInterval(
-        updateNotificationCount,
-        10000
-    );
-
-});
-
-// ==========================================
-// DEVJOURNAL — NAVIGATION MENU
-// ==========================================
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    const menuToggle =
-        document.getElementById("menu-toggle");
-
-    const navMenu =
-        document.getElementById("nav-menu");
-
-
-    if (!menuToggle || !navMenu) {
-        return;
-    }
-
-
-    function openMenu() {
-
-        navMenu.classList.add("open");
-
-        menuToggle.classList.add("active");
-
-        menuToggle.setAttribute(
-            "aria-expanded",
-            "true"
-        );
-
-        menuToggle.setAttribute(
-            "aria-label",
-            "Close menu"
-        );
-    }
-
-
-    function closeMenu() {
-
-        navMenu.classList.remove("open");
-
-        menuToggle.classList.remove("active");
-
-        menuToggle.setAttribute(
-            "aria-expanded",
-            "false"
-        );
-
-        menuToggle.setAttribute(
-            "aria-label",
-            "Open menu"
-        );
-    }
-
-
-    menuToggle.addEventListener("click", function (event) {
-
-        event.stopPropagation();
-
-        if (navMenu.classList.contains("open")) {
-            closeMenu();
-        } else {
-            openMenu();
-        }
-
-    });
-
-
-    // Close when clicking outside
-
-    document.addEventListener("click", function (event) {
+        const navMenu =
+            document.getElementById(
+                "nav-menu"
+            );
 
         if (
-            navMenu.classList.contains("open") &&
-            !navMenu.contains(event.target) &&
-            !menuToggle.contains(event.target)
+            !menuToggle ||
+            !navMenu
         ) {
-            closeMenu();
+            return;
         }
 
-    });
 
+        function openMenu() {
 
-    // Close with Escape
+            navMenu.classList.add(
+                "open"
+            );
 
-    document.addEventListener("keydown", function (event) {
+            navMenu.setAttribute(
+                "aria-hidden",
+                "false"
+            );
 
-        if (event.key === "Escape") {
-            closeMenu();
+            menuToggle.classList.add(
+                "active"
+            );
+
+            menuToggle.setAttribute(
+                "aria-expanded",
+                "true"
+            );
+
+            menuToggle.setAttribute(
+                "aria-label",
+                "Close menu"
+            );
         }
 
-    });
+
+        function closeMenu() {
+
+            navMenu.classList.remove(
+                "open"
+            );
+
+            navMenu.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+            menuToggle.classList.remove(
+                "active"
+            );
+
+            menuToggle.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+            menuToggle.setAttribute(
+                "aria-label",
+                "Open menu"
+            );
+        }
 
 
-    // Close after selecting a menu item
+        menuToggle.addEventListener(
+            "click",
+            function (event) {
 
-    navMenu.querySelectorAll(
-        ".menu-item[href]"
-    ).forEach(item => {
+                event.preventDefault();
+                event.stopPropagation();
 
-        item.addEventListener("click", function () {
-            closeMenu();
+                if (
+                    navMenu.classList.contains(
+                        "open"
+                    )
+                ) {
+
+                    closeMenu();
+
+                } else {
+
+                    openMenu();
+                }
+            }
+        );
+
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    navMenu.classList.contains(
+                        "open"
+                    ) &&
+                    !navMenu.contains(
+                        event.target
+                    ) &&
+                    !menuToggle.contains(
+                        event.target
+                    )
+                ) {
+
+                    closeMenu();
+                }
+            }
+        );
+
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Escape"
+                ) {
+
+                    closeMenu();
+                }
+            }
+        );
+
+
+        navMenu.querySelectorAll(
+            ".menu-item[href]"
+        ).forEach(item => {
+
+            item.addEventListener(
+                "click",
+                function () {
+
+                    closeMenu();
+                }
+            );
         });
-
-    });
-
-});
-
-// =====================================================
-// CSRF PROTECTION FOR AJAX POST REQUESTS
-// =====================================================
-
-(function () {
-
-    const csrfToken =
-        document.querySelector('meta[name="csrf-token"]')?.content;
-
-    if (!csrfToken) {
-        console.warn("DevJournal: CSRF token not found.");
-        return;
     }
+);
 
-    const originalFetch = window.fetch;
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    window.fetch = function (input, init = {}) {
-
-        const options = {
-            ...init
-        };
-
-        const method =
-            (options.method || "GET").toUpperCase();
-
-        if (method !== "GET" && method !== "HEAD") {
-
-            options.headers = {
-                ...(options.headers || {}),
-                "X-CSRFToken": csrfToken
-            };
-
-        }
-
-        return originalFetch(input, options);
-    };
-
-})();
+        initializeLikeSystem();
+        initializeSaveSystem();
+    }
+);

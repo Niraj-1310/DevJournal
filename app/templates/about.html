@@ -1,17 +1,160 @@
 {% extends "layout.html" %}
+
 {% block title %}
     About | DevJournal
 {% endblock title %}
 
 {% block content %}
 
-<section class="about">
-<h1>About DevJournal</h1>
+<section class="hero">
 
-<p>
-    DevJournal is a platform for developers to write, learn and share knowledge about Python, Flask, Django and modern web development.
-</p>
+    <span class="hero-tag">
+        👋 About DevJournal
+    </span>
+
+    <h1>Built by Developers,<br>for Developers.</h1>
+
+    <p>
+        DevJournal is a platform where developers write, learn, and share
+        knowledge about Python, Flask, Django, and modern web development.
+        No fluff, no algorithms deciding what you see — just real articles
+        from real developers.
+    </p>
+
+    <div class="hero-buttons">
+
+        {% if current_user.is_authenticated %}
+
+            <a href="{{ url_for('new_post') }}" class="hero-btn">
+                Write Your First Post
+            </a>
+
+        {% else %}
+
+            <a href="{{ url_for('register') }}" class="hero-btn">
+                Join DevJournal
+            </a>
+
+        {% endif %}
+
+        <a href="{{ url_for('home') }}#posts" class="hero-btn secondary">
+            Explore Articles
+        </a>
+
+    </div>
 
 </section>
+
+
+<!-- =========================================================
+     WHY DEVJOURNAL
+========================================================= -->
+
+<section class="trending-section">
+
+    <div class="trending-header">
+        <div>
+            <span class="trending-label">
+                💡 Why DevJournal
+            </span>
+
+            <h2>What Makes Us Different</h2>
+
+            <p>
+                A simple, focused space built for technical writing.
+            </p>
+        </div>
+    </div>
+
+    <div class="dashboard-stats">
+
+        <div class="stat-card">
+            <h3>📝</h3>
+            <p>Write in Markdown-friendly, distraction-free editor</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>🏷️</h3>
+            <p>Organize articles with categories and tags</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>💬</h3>
+            <p>Real discussions through comments, not just likes</p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     WHAT YOU CAN DO
+========================================================= -->
+
+<section class="posts">
+
+    <h2>What You Can Do Here</h2>
+
+    <div class="post-list">
+
+        <article class="post-card">
+            <h3>✏️ Publish Articles</h3>
+            <p class="post-content">
+                Share tutorials, project write-ups, or lessons learned.
+                Organize your work with categories and tags so readers
+                can find exactly what they're looking for.
+            </p>
+        </article>
+
+        <article class="post-card">
+            <h3>❤️ Engage With the Community</h3>
+            <p class="post-content">
+                Like posts that help you, leave comments to ask questions
+                or share feedback, and save articles you want to revisit
+                later.
+            </p>
+        </article>
+
+        <article class="post-card">
+            <h3>📊 Track Your Growth</h3>
+            <p class="post-content">
+                Your dashboard shows views, likes, and comments on your
+                posts — so you can see what resonates with readers over
+                time.
+            </p>
+        </article>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     CALL TO ACTION
+========================================================= -->
+
+{% if not current_user.is_authenticated %}
+
+<section class="hero" style="text-align: center; margin-top: 40px;">
+
+    <h1 style="font-size: 2.2rem;">
+        Ready to Share Your Knowledge?
+    </h1>
+
+    <p style="margin: 0 auto 35px;">
+        Join a growing community of developers writing about the tools
+        and technologies they use every day.
+    </p>
+
+    <div class="hero-buttons" style="justify-content: center;">
+        <a href="{{ url_for('register') }}" class="hero-btn">
+            Create Your Account
+        </a>
+    </div>
+
+</section>
+
+{% endif %}
 
 {% endblock content %}

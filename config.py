@@ -7,6 +7,8 @@ load_dotenv()
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY")
 
+    WTF_CSRF_HEADERS = ['X-CSRFToken', 'X-CSRF-Token']
+
     SQLALCHEMY_DATABASE_URI = (
         os.environ.get("DATABASE_URL")
         or "sqlite:///site.db"

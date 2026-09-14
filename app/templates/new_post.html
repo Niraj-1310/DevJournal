@@ -27,9 +27,7 @@ New Post | DevJournal
         <div class="form-group">
             {{ form.tags.label }}
 
-            {{ form.tags(
-                placeholder="python, flask, web development"
-            ) }}
+            {{ form.tags(class_="form-control", placeholder="python, flask, web development") }}
 
             <small class="form-help">
                 Separate tags with commas.
