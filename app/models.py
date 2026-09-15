@@ -35,7 +35,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
+    image_file = db.Column(db.String(150), nullable=False, default='default.jpg')
     bio = db.Column(db.Text, default="")
     github = db.Column(db.String(120), default="")
     linkedin = db.Column(db.String(120), default="")

@@ -12,3 +12,5 @@ instance/
 
 # ZIP backup/archive
 *.zip
+
+migrate_data.py
