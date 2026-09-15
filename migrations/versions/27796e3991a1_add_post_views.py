@@ -17,7 +17,15 @@ depends_on = None
 
 
 def upgrade():
-    pass
+    with op.batch_alter_table('post', schema=None) as batch_op:
+        batch_op.add_column(
+            sa.Column(
+                'views',
+                sa.Integer(),
+                nullable=False,
+                server_default='0'
+            )
+        )
 
     # ### end Alembic commands ###
 
