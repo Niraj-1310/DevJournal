@@ -40,6 +40,9 @@
         
     </head>
     <body data-user-id="{{ current_user.id if current_user.is_authenticated else '' }}">
+
+        <div class="reading-progress-bar" id="reading-progress-bar"></div>
+
         <nav class="navbar">
 
             <!-- =====================================================

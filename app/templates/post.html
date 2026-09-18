@@ -28,7 +28,7 @@
 <article class="single-post">
 
     <a href="{{ url_for('category_posts', category=post.category) }}"
-       class="post-category post-category-class">
+       class="post-category {{ category_color_class(post.category) }}">
         {{ post.category or "Uncategorized" }}
     </a>
 
@@ -360,7 +360,7 @@
 
                 <a
                     href="{{ url_for('category_posts', category=related.category) }}"
-                    class="post-category"
+                    class="post-category {{ category_color_class(related.category) }}"
                 >
                     {{ related.category or "Uncategorized" }}
                 </a>

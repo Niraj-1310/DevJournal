@@ -84,6 +84,161 @@ function showToast(message, category = "info") {
     }, 3000);
 }
 
+// ============================================================
+// READING PROGRESS BAR
+// ============================================================
+
+function initializeReadingProgress() {
+
+    const progressBar =
+        document.getElementById("reading-progress-bar");
+
+    const postBody =
+        document.querySelector(".post-body");
+
+    if (!progressBar || !postBody) {
+        return;
+    }
+
+    progressBar.classList.add("active");
+
+    function updateProgress() {
+
+        const scrollTop =
+            window.scrollY;
+
+        const docHeight =
+            document.documentElement.scrollHeight -
+            window.innerHeight;
+
+        const progress =
+            docHeight > 0
+                ? (scrollTop / docHeight) * 100
+                : 0;
+
+        progressBar.style.width =
+            Math.min(100, Math.max(0, progress)) + "%";
+    }
+
+    window.addEventListener("scroll", updateProgress, { passive: true });
+
+    updateProgress();
+}
+
+
+// ============================================================
+// NAVBAR SCROLL ELEVATION
+// ============================================================
+
+function initializeNavbarElevation() {
+
+    const navbar =
+        document.querySelector(".navbar");
+
+    if (!navbar) {
+        return;
+    }
+
+    function updateNavbarState() {
+
+        if (window.scrollY > 12) {
+            navbar.classList.add("scrolled");
+        } else {
+            navbar.classList.remove("scrolled");
+        }
+    }
+
+    window.addEventListener("scroll", updateNavbarState, { passive: true });
+
+    updateNavbarState();
+}
+
+
+// ============================================================
+// LIKE BUTTON BURST EFFECT
+// ============================================================
+
+function triggerLikeBurst(form, heartIcon) {
+
+    if (heartIcon) {
+
+        heartIcon.classList.remove("pop");
+
+        // Force reflow so the animation can replay
+        void heartIcon.offsetWidth;
+
+        heartIcon.classList.add("pop");
+    }
+
+    const particleCount = 6;
+
+    for (let i = 0; i < particleCount; i++) {
+
+        const particle =
+            document.createElement("span");
+
+        particle.className = "like-burst";
+
+        const angle =
+            (Math.PI * 2 * i) / particleCount;
+
+        const distance = 22;
+
+        particle.style.setProperty(
+            "--burst-x",
+            `${Math.cos(angle) * distance}px`
+        );
+
+        particle.style.setProperty(
+            "--burst-y",
+            `${Math.sin(angle) * distance}px`
+        );
+
+        form.appendChild(particle);
+
+        requestAnimationFrame(() => {
+            particle.classList.add("animate");
+        });
+
+        setTimeout(() => {
+            particle.remove();
+        }, 650);
+    }
+}
+
+// ============================================================
+// FLASK FLASH MESSAGES
+// ============================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const flashMessages =
+            document.querySelectorAll(
+                ".toast-container .toast"
+            );
+
+        flashMessages.forEach(message => {
+
+            // Make the Flask flash message visible
+            requestAnimationFrame(() => {
+                message.classList.add("show");
+            });
+
+            // Automatically remove after 3 seconds
+            setTimeout(() => {
+
+                message.classList.remove("show");
+
+                setTimeout(() => {
+                    message.remove();
+                }, 300);
+
+            }, 3000);
+        });
+    }
+);
 
 // ============================================================
 // SAFE AJAX FETCH
@@ -282,6 +437,10 @@ function initializeLikeSystem() {
                         "liked",
                         liked
                     );
+
+                    if (liked) {
+                        triggerLikeBurst(form, heartIcon);
+                    }
 
                     if (data.message) {
 
@@ -1383,5 +1542,7 @@ document.addEventListener(
 
         initializeLikeSystem();
         initializeSaveSystem();
+        initializeReadingProgress();
+        initializeNavbarElevation();
     }
 );

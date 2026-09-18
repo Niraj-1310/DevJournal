@@ -114,9 +114,16 @@
 
                             <div class="notification-message">
 
-                                <strong>
-                                    {{ notification.actor.username }}
-                                </strong>
+                                <a 
+                                    href="{{ url_for('user_posts', username=notification.actor.username) }}"
+                                    class="notification-actor-link"
+                                >
+
+                                    <strong>
+                                        {{ notification.actor.username }}
+                                    </strong>
+
+                                </a>
 
                                 {% if notification.type == 'like' %}
 
@@ -251,7 +258,6 @@
     {% endif %}
 
 </div>
-
 
 <script>
 

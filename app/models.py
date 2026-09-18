@@ -3,10 +3,20 @@ from flask_login import UserMixin
 from app import login_manager, db
 from flask import current_app
 from itsdangerous import URLSafeTimedSerializer
+import math
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+CATEGORY_COLOR_COUNT = 8
+
+def category_color_class(category):
+    """Deterministically map a category name to one of 8 accent classes."""
+    if not category:
+        return "cat-color-0"
+    index = sum(ord(char) for char in category) % CATEGORY_COLOR_COUNT
+    return f"cat-color-{index}"
 
 # =========================================================
 # POST ↔ TAG ASSOCIATION

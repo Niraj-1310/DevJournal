@@ -83,7 +83,7 @@
 
                 <a
                     href="{{ url_for('category_posts', category=item.post.category) }}"
-                    class="post-category"
+                    class="post-category {{ category_color_class(item.post.category) }}"
                 >
                     {{ item.post.category or "Uncategorized" }}
                 </a>
@@ -162,7 +162,7 @@
 
                 <a
                     href="{{ url_for('category_posts', category=post.category) }}"
-                    class="post-category"
+                    class="post-category {{ category_color_class(post.category) }}"
                 >
                     {{ post.category }}
                 </a>

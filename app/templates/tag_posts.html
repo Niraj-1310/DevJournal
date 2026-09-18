@@ -38,7 +38,7 @@
                             'category_posts',
                             category=post.category
                         ) }}"
-                        class="post-category"
+                        class="post-category {{ category_color_class(post.category) }}"
                     >
                         {{ post.category }}
                     </a>

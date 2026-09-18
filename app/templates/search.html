@@ -105,12 +105,12 @@
                     {% if post.category %}
                         <a
                             href="{{ url_for('category_posts', category=post.category) }}"
-                            class="post-category"
+                            class="post-category {{ category_color_class(post.category) }}"
                         >
                             {{ post.category|highlight(query) }}
                         </a>
                     {% else %}
-                        <span class="post-category">Uncategorized</span>
+                        <span class="post-category {{ category_color_class(post.category) }}">Uncategorized</span>
                     {% endif %}
 
                     <h3>

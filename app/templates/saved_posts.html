@@ -23,7 +23,7 @@ Saved Posts
     <article class="post-card">
 
         <a href="{{ url_for('category_posts', category=item.post.category) }}"
-           class="post-category">
+           class="post-category {{ category_color_class(item.post.category) }}">
             {{ item.post.category }}
         </a>
 
