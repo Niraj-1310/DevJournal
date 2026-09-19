@@ -34,15 +34,11 @@
         transparent 55%
         );
     --accent-color: #f97316;
-    --accent-hover: #ea580c;
-    --accent-soft: #fff7ed;
-
     --shadow-small: 0 8px 20px rgba(0, 0, 0, 0.05);
     --muted-text: var(--muted-color);
     --card-bg: var(--surface-color);
     --card-shadow: var(--shadow-soft);
     --card-shadow-hover: var(--shadow-heavy);
-    --primary-bg: #ffffff;
 }
 
 /* =========================================================
@@ -73,17 +69,12 @@
         transparent 55%
         );
     --accent-color: #fb923c;
-    --accent-hover: #fdba74;
-    --accent-soft: #431407;
     --surface-navy-deep: #0f1729;
-    --surface-navy-mid: #1a2544;
-
     --shadow-small: 0 8px 20px rgba(0, 0, 0, 0.20);
     --muted-text: var(--muted-color);
     --card-bg: var(--surface-color);
     --card-shadow: var(--shadow-soft);
     --card-shadow-hover: var(--shadow-heavy);
-    --primary-bg: #ffffff;
 }
 
 /* =========================================================
@@ -108,12 +99,9 @@ html {
 
 body {
     font-family: "Poppins", sans-serif;
-
     background: var(--bg-color);
     color: var(--text-color);
-
     line-height: 1.7;
-
     transition:
         background-color 0.25s ease,
         color 0.25s ease;
@@ -150,6 +138,11 @@ select {
         backdrop-filter 0.3s ease;
 }
 
+.navbar.scrolled {
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    backdrop-filter: blur(14px);
+}
+
 .nav-top{width:min(1200px,100%);min-height:70px;margin:0 auto;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:28px;}
 
 .logo {
@@ -181,6 +174,19 @@ select {
 .notification-link{position:relative;width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border-color);border-radius:12px;background:var(--surface-color);text-decoration:none;transition:.2s;}
 
 .notification-link:hover,.menu-toggle:hover,.menu-toggle[aria-expanded="true"]{background:var(--surface-soft);border-color:var(--primary-color);}
+
+.notification-link,
+.menu-toggle {
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.notification-link:active,
+.menu-toggle:active {
+    transform: scale(0.92);
+}
 
 .notification-icon{font-size:19px;line-height:1;}
 
@@ -327,27 +333,20 @@ select {
 .theme-toggle-row {
     width: 100%;
     min-height: 52px;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     gap: 14px;
     padding: 8px 10px;
-
     border: 1px solid transparent;
     border-radius: 11px;
-
     background: transparent;
     color: var(--text-color);
-
     font-family: inherit;
     font-size: 15px;
     font-weight: 600;
-
     text-align: left;
     cursor: pointer;
-
     transition:
         background-color 0.18s ease,
         border-color 0.18s ease;
@@ -370,25 +369,18 @@ select {
 
 .theme-switch {
     position: relative;
-
     width: 76px;
     height: 38px;
     flex: 0 0 76px;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     padding: 0 8px;
-
     border: 1px solid var(--border-color);
     border-radius: 999px;
-
     background: var(--surface-soft);
     overflow: hidden;
-
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
-
     transition:
         background-color 0.25s ease,
         border-color 0.25s ease;
@@ -397,17 +389,13 @@ select {
 .theme-option {
     position: relative;
     z-index: 1;
-
     width: 24px;
     height: 24px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     font-size: 15px;
     line-height: 1;
-
     transition: opacity 0.2s ease, transform 0.25s ease;
 }
 
@@ -423,22 +411,16 @@ select {
     position: absolute;
     top: 4px;
     left: 4px;
-
     width: 30px;
     height: 30px;
-
     border-radius: 50%;
     background: var(--surface-color);
-
     box-shadow: 0 2px 7px rgba(0, 0, 0, 0.18);
-
     transition:
         left 0.25s ease,
         background-color 0.25s ease,
         box-shadow 0.25s ease;
 }
-
-/* Dark mode: thumb moves RIGHT and moon becomes active. */
 
 html.dark-mode .theme-switch,
 body.dark-mode .theme-switch {
@@ -484,11 +466,8 @@ body.dark-mode .theme-moon {
 
 .container {
     width: 90%;
-
     max-width: 1200px;
-
     margin: auto;
-
     padding-top: 135px;
 }
 
@@ -505,6 +484,13 @@ body.dark-mode .theme-moon {
     border-radius: 24px;
 }
 
+.dark-mode .hero {
+    background-color: var(--surface-navy-deep);
+    background-image:
+        radial-gradient(circle at 25% 25%, rgba(212, 175, 55, 0.10), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.06), transparent 50%);
+}
+
 .hero h1 {
     font-size: 4rem;
     font-weight: 700;
@@ -519,11 +505,8 @@ body.dark-mode .theme-moon {
 
 .hero p {
     font-size: 1.2rem;
-
     color: var(--muted-color);
-
     max-width: 650px;
-
     margin-bottom: 35px;
 }
 
@@ -541,10 +524,109 @@ body.dark-mode .theme-moon {
 
 .hero-buttons {
     display: flex;
-
     gap: 18px;
-
     margin-top: 35px;
+}
+
+.confirm-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 8000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+ 
+.confirm-modal-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+ 
+.confirm-modal {
+    width: 100%;
+    max-width: 360px;
+    padding: 28px 26px 24px;
+    text-align: center;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    box-shadow: var(--shadow-heavy);
+    transform: translateY(12px) scale(0.96);
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+ 
+.confirm-modal-overlay.open .confirm-modal {
+    transform: translateY(0) scale(1);
+}
+ 
+.confirm-modal-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    background: var(--gradient-soft);
+    font-size: 26px;
+}
+ 
+.confirm-modal h3 {
+    margin: 0 0 8px;
+    color: var(--heading-color);
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+ 
+.confirm-modal p {
+    margin: 0 0 22px;
+    color: var(--muted-color);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+ 
+.confirm-modal-actions {
+    display: flex;
+    gap: 10px;
+}
+ 
+.confirm-modal-cancel,
+.confirm-modal-confirm {
+    flex: 1;
+    min-height: 44px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+ 
+.confirm-modal-cancel {
+    background: var(--surface-soft);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+ 
+.confirm-modal-cancel:hover {
+    background: var(--border-color);
+}
+ 
+.confirm-modal-confirm {
+    background: var(--gradient-primary);
+    color: #1a1200;
+    border: none;
+    box-shadow: 0 6px 16px rgba(184, 134, 11, 0.25);
+}
+ 
+.confirm-modal-confirm:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(184, 134, 11, 0.32);
 }
 
 /* =========================================================
@@ -575,7 +657,6 @@ body.dark-mode .theme-moon {
 
 .trending-header h2 {
     margin: 0 0 6px;
-
     color: var(--heading-color);
     font-size: 1.8rem;
     font-weight: 700;
@@ -583,12 +664,9 @@ body.dark-mode .theme-moon {
 
 .trending-header p {
     margin: 0;
-
     color: var(--muted-color);
     font-size: 14px;
 }
-
-/* ---------- Trending list ---------- */
 
 .trending-list {
     display: grid;
@@ -596,24 +674,17 @@ body.dark-mode .theme-moon {
     gap: 14px;
 }
 
-/* ---------- Trending card ---------- */
-
 .trending-card {
     position: relative;
-
     display: flex;
     align-items: center;
     gap: 16px;
-
     min-width: 0;
     padding: 18px;
-
     background: var(--surface-color);
     border: 1px solid var(--border-color);
     border-radius: 14px;
-
     box-shadow: var(--shadow-small);
-
     transition:
         transform 0.2s ease,
         box-shadow 0.2s ease,
@@ -621,12 +692,10 @@ body.dark-mode .theme-moon {
 }
 
 .trending-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-medium);
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: var(--shadow-heavy);
     border-color: var(--primary-color);
 }
-
-/* ---------- Rank ---------- */
 
 .trending-rank {
     flex: 0 0 42px;
@@ -642,8 +711,6 @@ body.dark-mode .theme-moon {
     font-weight: 800;
 }
 
-/* ---------- Content ---------- */
-
 .trending-content {
     flex: 1;
     min-width: 0;
@@ -651,9 +718,7 @@ body.dark-mode .theme-moon {
 
 .trending-content .post-category {
     display: inline-block;
-
     margin-bottom: 7px;
-
     font-size: 11px;
 }
 
@@ -663,15 +728,12 @@ body.dark-mode .theme-moon {
 
 .trending-title {
     display: block;
-
     color: var(--heading-color);
     font-size: 16px;
     font-weight: 700;
     line-height: 1.4;
-
     overflow-wrap: anywhere;
     word-break: break-word;
-
     transition: color 0.2s ease;
 }
 
@@ -679,11 +741,8 @@ body.dark-mode .theme-moon {
     color: var(--primary-color);
 }
 
-/* ---------- Author ---------- */
-
 .trending-author {
     margin: 0 0 9px;
-
     color: var(--muted-color);
     font-size: 12px;
 }
@@ -697,38 +756,27 @@ body.dark-mode .theme-moon {
     color: var(--primary-color);
 }
 
-/* ---------- Stats ---------- */
-
 .trending-stats {
     display: flex;
     align-items: center;
     gap: 13px;
-
     color: var(--muted-color);
     font-size: 12px;
     font-weight: 600;
 }
 
-/* ---------- Arrow ---------- */
-
 .trending-arrow {
     flex: 0 0 auto;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     width: 34px;
     height: 34px;
-
     border-radius: 50%;
-
     color: var(--heading-color);
     background: var(--secondary-bg);
-
     font-size: 18px;
     text-decoration: none;
-
     transition:
         transform 0.2s ease,
         background 0.2s ease,
@@ -746,128 +794,95 @@ body.dark-mode .theme-moon {
 
 .hero-btn {
     display: inline-flex;
-
     align-items: center;
     justify-content: center;
-
     text-decoration: none;
-
     background: var(--primary-color);
-
     color: #fff;
-
     padding: 12px 24px;
-
     min-height: 42px;
-
     border: 1px solid var(--primary-color);
-
     border-radius: 10px;
-
     font-weight: 600;
-
     cursor: pointer;
-
     transition: 0.2s ease;
 }
 
 .hero-btn:hover {
     background: var(--primary-hover);
-
     border-color: var(--primary-hover);
 }
 
 .secondary {
     background: var(--surface-color);
-
     color: var(--primary-color);
-
     border: 1px solid var(--primary-color);
 }
 
 .secondary:hover {
     background: var(--primary-color);
-
     color: #fff;
 }
 
 .action-btn {
     display: inline-flex;
-
     align-items: center;
     justify-content: center;
-
     min-width: 100px;
-
     height: 42px;
-
     padding: 0 18px;
-
     border: 1px solid transparent;
-
     border-radius: 9px;
-
     font-size: 14px;
-
     font-weight: 600;
-
     text-decoration: none;
-
     cursor: pointer;
-
     transition: 0.2s ease;
 }
 
 .edit-btn {
     background: var(--primary-color);
-
     color: #fff;
-
     border: 1px solid var(--primary-color);
 }
 
 .edit-btn:hover {
     background: var(--primary-hover);
-
     border-color: var(--primary-hover);
 }
 
 .delete-btn {
     background: var(--danger-color);
-
     color: #fff;
-
     border: 1px solid var(--danger-color);
-
     font-family: inherit;
-
     cursor: pointer;
 }
 
 .delete-btn:focus {
     outline: 2px solid rgba(220, 53, 69, 0.25);
-
     outline-offset: 2px;
 }
 
 .delete-btn:hover {
     background: var(--danger-hover);
-
     border-color: var(--danger-hover);
 }
 
 .reaction-btn {
     background: var(--surface-color);
-
     border: 1px solid var(--border-color);
-
     color: var(--text-color);
 }
 
 .reaction-btn:hover {
     background: var(--surface-soft);
-
     border-color: var(--primary-color);
+}
+
+.post-footer .reaction-btn .like-count {
+    margin-left: 6px;
+
 }
 
 button:focus-visible,
@@ -877,6 +892,55 @@ textarea:focus-visible,
 select:focus-visible {
     outline: 3px solid var(--primary-color);
     outline-offset: 3px;
+}
+
+.hero-btn:not(.secondary),
+.form-btn {
+    position: relative;
+    overflow: hidden;
+    color: #1a1200;
+    font-weight: 600;
+}
+
+.hero-btn:not(.secondary) {
+    background: var(--gradient-primary);
+    border: none;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.28);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.hero-btn:not(.secondary):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.36);
+}
+
+.hero-btn:not(.secondary):active {
+    transform: translateY(0);
+}
+
+.hero-btn:not(.secondary)::after,
+.form-btn::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.45) 50%,
+        transparent 100%
+    );
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+}
+
+.hero-btn:not(.secondary):hover::after,
+.form-btn:hover::after {
+    left: 130%;
 }
 
 /* =========================================================
@@ -889,9 +953,7 @@ select:focus-visible {
 
 .posts h2 {
     margin-bottom: 30px;
-
     font-size: 2rem;
-
     color: var(--heading-color);
 }
 
@@ -906,13 +968,8 @@ select:focus-visible {
     border-radius: 16px;
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-soft);
-    transition: transform 0.2s ease,
-        box-shadow 0.2s ease,
-        background-color 0.25s ease,
-        border-color 0.25s ease;
     position: relative;
     overflow: hidden;
-    padding-top: 28px;
 }
 
 .post-card:hover {
@@ -921,25 +978,35 @@ select:focus-visible {
     border-color: transparent;
 }
 
+.post-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--gradient-primary);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.3s ease;
+}
+
+.post-card:hover::before {
+    transform: scaleY(1);
+}
+
 .post-card h3 {
     max-width: 100%;
-
     font-size: 1.55rem;
-
     line-height: 1.4;
-
     margin-bottom: 12px;
-
     overflow-wrap: anywhere;
-
     word-break: break-word;
 }
 
 .post-card p {
     color: var(--muted-color);
-
     font-size: 1rem;
-
     line-height: 1.8;
 }
 
@@ -966,7 +1033,6 @@ select:focus-visible {
 .related-posts {
     margin-top: 48px;
     padding-top: 32px;
-
     border-top: 1px solid var(--border-color);
 }
 
@@ -976,57 +1042,39 @@ select:focus-visible {
 
 .related-label {
     display: inline-block;
-
     margin-bottom: 7px;
-
     color: var(--primary-color);
-
     font-size: 12px;
     font-weight: 700;
 }
 
 .related-posts-header h2 {
     margin: 0 0 6px;
-
     color: var(--heading-color);
-
     font-size: 1.55rem;
     font-weight: 700;
 }
 
 .related-posts-header p {
     margin: 0;
-
     color: var(--muted-color);
-
     font-size: 13px;
 }
 
-/* ---------- Grid ---------- */
-
 .related-posts-grid {
     display: grid;
-
     grid-template-columns: repeat(2, minmax(0, 1fr));
-
     gap: 14px;
 }
 
-/* ---------- Card ---------- */
-
 .related-post-card {
     min-width: 0;
-
     display: flex;
     flex-direction: column;
-
     padding: 18px;
-
     background: var(--secondary-bg);
-
     border: 1px solid var(--border-color);
     border-radius: 14px;
-
     transition:
         transform 0.2s ease,
         box-shadow 0.2s ease,
@@ -1034,24 +1082,16 @@ select:focus-visible {
 }
 
 .related-post-card:hover {
-    transform: translateY(-2px);
-
+    transform: translateY(-4px) scale(1.01);
     border-color: var(--primary-color);
-
-    box-shadow: var(--shadow-small);
+    box-shadow: var(--shadow-heavy);
 }
-
-/* ---------- Category ---------- */
 
 .related-post-card .post-category {
     align-self: flex-start;
-
     margin-bottom: 10px;
-
     font-size: 11px;
 }
-
-/* ---------- Title ---------- */
 
 .related-post-card h3 {
     margin: 0 0 9px;
@@ -1059,15 +1099,11 @@ select:focus-visible {
 
 .related-post-title {
     color: var(--heading-color);
-
     font-size: 15px;
     font-weight: 700;
-
     line-height: 1.4;
-
     overflow-wrap: anywhere;
     word-break: break-word;
-
     transition: color 0.2s ease;
 }
 
@@ -1075,19 +1111,14 @@ select:focus-visible {
     color: var(--primary-color);
 }
 
-/* ---------- Info ---------- */
-
 .related-post-info {
     margin: 0 0 15px;
-
     color: var(--muted-color);
-
     font-size: 11px;
 }
 
 .related-post-info a {
     color: var(--heading-color);
-
     font-weight: 600;
 }
 
@@ -1095,30 +1126,21 @@ select:focus-visible {
     margin: 0 4px;
 }
 
-/* ---------- Footer ---------- */
-
 .related-post-footer {
     display: flex;
     align-items: center;
-
     gap: 12px;
-
     margin-top: auto;
-
     color: var(--muted-color);
-
     font-size: 11px;
     font-weight: 600;
 }
 
 .related-post-footer a {
     margin-left: auto;
-
     color: var(--primary-color);
-
     font-size: 11px;
     font-weight: 700;
-
     white-space: nowrap;
 }
 
@@ -1128,17 +1150,11 @@ select:focus-visible {
 
 .post-meta {
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
-
     gap: 15px;
-
     color: var(--muted-light-color);
-
     font-size: 14px;
-
     margin-bottom: 15px;
 }
 
@@ -1152,9 +1168,7 @@ select:focus-visible {
 
 .post-info a {
     color: var(--heading-color);
-
     font-weight: 600;
-
     text-decoration: none;
 }
 
@@ -1168,21 +1182,13 @@ select:focus-visible {
 
 .post-category {
     display: inline-block;
-
     background: var(--secondary-bg);
-
     color: var(--primary-color);
-
     padding: 6px 13px;
-
     border-radius: 30px;
-
     font-size: 12px;
-
     font-weight: 600;
-
     margin-bottom: 16px;
-
     text-decoration: none;
 }
 
@@ -1364,12 +1370,9 @@ select:focus-visible {
     color: var(--primary-color);
 }
 
-/* ---------- Inline Like / Comment ---------- */
-
 .like-form {
     display: inline-flex;
     align-items: center;
-
     margin: 0;
     padding: 0;
 }
@@ -1378,34 +1381,23 @@ select:focus-visible {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     gap: 5px;
-
     min-width: auto;
     min-height: 24px;
-
     margin: 0;
     padding: 0;
-
     border: 0;
     border-radius: 0;
-
     background: transparent;
     color: var(--muted-color);
-
     font-family: inherit;
     font-size: 15px;
     font-weight: 500;
-
     line-height: 1;
-
     cursor: pointer;
-
     appearance: none;
     -webkit-appearance: none;
-
     box-shadow: none;
-
     transition:
         color 0.2s ease,
         transform 0.2s ease;
@@ -1413,19 +1405,14 @@ select:focus-visible {
 
 .inline-reaction-btn:hover {
     background: transparent;
-
     color: var(--primary-color);
-
     border: 0;
-
     transform: translateY(-1px);
 }
 
 .inline-reaction-btn:focus {
     background: transparent;
-
     border: 0;
-
     outline: none;
 }
 
@@ -1448,39 +1435,24 @@ select:focus-visible {
 
 .like-count {
     display: inline-flex;
-
     align-items: center;
-
     min-width: 10px;
-
     color: inherit;
-
     font-size: 15px;
     line-height: 1;
 }
 
-/* ---------- Dashboard Like / Comment links ---------- */
-
 .post-stat-link {
     display: inline-flex;
-
     align-items: center;
-
     gap: 5px;
-
     min-height: 24px;
-
     color: var(--muted-color);
-
     font-size: 15px;
     font-weight: 500;
-
     line-height: 1;
-
     text-decoration: none;
-
     white-space: nowrap;
-
     transition:
         color 0.2s ease,
         transform 0.2s ease;
@@ -1488,21 +1460,15 @@ select:focus-visible {
 
 .post-stat-link:hover {
     color: var(--primary-color);
-
     transform: translateY(-1px);
 }
 
 .read-more {
     display: inline-block;
-
     text-decoration: none;
-
     margin-top: 18px;
-
     color: var(--primary-color);
-
     font-weight: 600;
-
     transition: 0.25s ease;
 }
 
@@ -1526,29 +1492,21 @@ select:focus-visible {
 
 .single-post h1 {
     max-width: 100%;
-
     margin: 16px 0 20px;
-
     color: var(--heading-color);
-
     font-size: 2.45rem;
     font-weight: 700;
     line-height: 1.25;
     letter-spacing: -0.5px;
-
     overflow-wrap: anywhere;
     word-break: break-word;
 }
 
-/* ---------- Author information ---------- */
-
 .single-post .post-info {
     display: flex;
     align-items: center;
-
     gap: 13px;
     margin-bottom: 30px;
-
     color: var(--muted-color);
 }
 
@@ -1579,8 +1537,6 @@ select:focus-visible {
     font-size: 12px;
 }
 
-/* ---------- Article content ---------- */
-
 .post-body {
     max-width: 100%;
     margin: 0 0 34px;
@@ -1592,48 +1548,35 @@ select:focus-visible {
     word-break: break-word;
 }
 
-/* ---------- Post actions ---------- */
-
 .post-actions {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 10px;
-
     padding-top: 22px;
     margin: 0;
-
     border-top: 1px solid var(--border-color);
 }
 
 .post-actions form {
     display: inline-flex;
     align-items: center;
-
     margin: 0;
     padding: 0;
 }
-
-/* ---------- Like / Save ---------- */
 
 .post-actions .action-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     height: 40px;
     min-width: auto;
-
     padding: 0 13px;
-
     border-radius: 8px;
-
     font-size: 13px;
     font-weight: 600;
-
     line-height: 1;
     white-space: nowrap;
-
     box-sizing: border-box;
 }
 
@@ -1645,12 +1588,9 @@ select:focus-visible {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     width: 18px;
     height: 18px;
-
     margin-right: 6px;
-
     font-size: 15px;
     line-height: 1;
 }
@@ -1658,13 +1598,9 @@ select:focus-visible {
 .post-actions .like-count {
     display: inline-flex;
     align-items: center;
-
     height: 20px;
-
     line-height: 1;
 }
-
-/* ---------- Save ---------- */
 
 .post-actions .save-form {
     display: inline-flex;
@@ -1674,22 +1610,16 @@ select:focus-visible {
 .post-actions .save-text {
     display: inline-flex;
     align-items: center;
-
     line-height: 1;
 }
-
-/* ---------- Edit / Delete ---------- */
 
 .post-actions .edit-btn,
 .post-actions .delete-btn {
     height: 40px;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     white-space: nowrap;
-
     box-sizing: border-box;
 }
 
@@ -1703,45 +1633,29 @@ select:focus-visible {
 
 .back-button {
     margin-top: 15px;
-
     margin-bottom: 20px;
 }
 
 .back-arrow {
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
-
     width: 42px;
-
     height: 42px;
-
     border-radius: 50%;
-
     background: var(--surface-color);
-
     color: var(--primary-color);
-
     border: 1px solid var(--border-color);
-
     text-decoration: none;
-
     font-size: 24px;
-
     font-weight: 700;
-
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-
     transition: 0.25s ease;
 }
 
 .back-arrow:hover {
     background: var(--primary-color);
-
     color: #fff;
-
     transform: translateX(-2px);
 }
 
@@ -1764,7 +1678,6 @@ select:focus-visible {
 
 .form-container h2 {
     margin-bottom: 25px;
-
     color: var(--heading-color);
 }
 
@@ -1778,11 +1691,8 @@ select:focus-visible {
 
 .form-group label {
     display: block;
-
     margin-bottom: 8px;
-
     font-weight: 600;
-
     color: var(--heading-color);
 }
 
@@ -1826,7 +1736,6 @@ body.dark-mode .form-control:focus {
 
 textarea.form-control {
     min-height: 140px;
-
     resize: vertical;
 }
 
@@ -1839,9 +1748,7 @@ textarea.form-control {
     border: none;
     border-radius: 9px;
     background: var(--gradient-primary);
-    color: #fff;
     font-size: 15px;
-    font-weight: 600;
     cursor: pointer;
     transition: transform 0.2s ease,
         box-shadow 0.2s ease;
@@ -1849,68 +1756,51 @@ textarea.form-control {
 }
 
 .form-btn:hover {
-    background: var(--primary-hover);
     transform: translateY(-1px);
     box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
 }
 
 .form-check {
     display: flex;
-
     align-items: center;
-
     gap: 8px;
-
     margin: 15px 0;
 }
 
 .form-check-input {
     width: 16px;
-
     height: 16px;
-
     cursor: pointer;
 }
 
 .form-check-label {
     font-size: 14px;
-
     color: var(--muted-color);
-
     cursor: pointer;
 }
 
 .form-subtitle {
     color: var(--muted-color);
-
     margin: 8px 0 25px;
-
     font-size: 0.96rem;
 }
 
 .form-error {
     display: block;
-
     color: #ef4444;
-
     margin-top: 6px;
-
     font-size: 0.85rem;
 }
 
 .auth-link {
     text-align: center;
-
     margin-top: 20px;
-
     color: var(--muted-color);
 }
 
 .auth-link a {
     color: var(--primary-color);
-
     text-decoration: none;
-
     font-weight: 600;
 }
 
@@ -1924,13 +1814,11 @@ textarea.form-control {
 
 .profile-upload-group {
     margin-top: 10px;
-
     margin-bottom: 24px;
 }
 
 .profile-upload-group > label:first-child {
     display: block;
-
     margin-bottom: 8px;
 }
 
@@ -1940,31 +1828,18 @@ textarea.form-control {
 
 .custom-file-label {
     width: 100%;
-
     min-height: 44px;
-
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
-
     padding: 10px 16px;
-
     border: 1px solid var(--primary-color);
-
     border-radius: 10px;
-
     background: var(--secondary-bg);
-
     color: var(--primary-color);
-
     font-size: 14px;
-
     font-weight: 600;
-
     cursor: pointer;
-
     transition:
         background 0.2s ease,
         color 0.2s ease,
@@ -1974,7 +1849,6 @@ textarea.form-control {
 
 .custom-file-label:hover {
     background: var(--primary-color);
-
     color: #fff;
 }
 
@@ -1984,21 +1858,15 @@ textarea.form-control {
 
 .custom-file-label.file-selected {
     background: var(--primary-color);
-
     color: #fff;
 }
 
 .current-picture-name {
     display: block;
-
     margin-top: 8px;
-
     color: var(--muted-light-color);
-
     font-size: 13px;
-
     text-align: center;
-
     overflow-wrap: anywhere;
 }
 
@@ -2008,25 +1876,17 @@ textarea.form-control {
 
 .search-form {
     display: flex;
-
     align-items: center;
-
     gap: 10px;
 }
 
 .search-input {
     width: 220px;
-
     height: 38px;
-
     padding: 0 14px;
-
     border: 1px solid var(--input-border);
-
     border-radius: 8px;
-
     background: var(--surface-color);
-
     color: var(--text-color);
 }
 
@@ -2036,21 +1896,13 @@ textarea.form-control {
 
 .search-btn {
     height: 38px;
-
     padding: 0 18px;
-
     border: none;
-
     border-radius: 8px;
-
     background: var(--primary-color);
-
     color: #fff;
-
     font-weight: 600;
-
     cursor: pointer;
-
     transition: 0.25s ease;
 }
 
@@ -2067,65 +1919,48 @@ textarea.form-control {
     margin-top: 20px;
 }
 
-/* ---------- Search Results Header ---------- */
-
 .search-results-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     gap: 25px;
     margin-bottom: 18px;
     padding: 24px 26px;
-
     background: var(--surface-color);
-
     border: 1px solid var(--border-color);
     border-radius: 16px;
-
     box-shadow: var(--shadow-soft);
 }
 
 .search-results-heading {
     min-width: 0;
-
     display: flex;
     align-items: center;
-
     gap: 15px;
 }
 
 .search-results-icon {
     width: 48px;
     height: 48px;
-
     flex: 0 0 48px;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 13px;
-
     background: var(--secondary-bg);
-
     font-size: 21px;
 }
 
 .search-results-heading h1 {
     margin: 0;
-
     color: var(--heading-color);
-
     font-size: 1.65rem;
     line-height: 1.25;
 }
 
 .search-results-heading p {
     margin: 5px 0 0;
-
     color: var(--muted-color);
-
     font-size: 0.9rem;
     line-height: 1.5;
 }
@@ -2134,30 +1969,20 @@ textarea.form-control {
     color: var(--heading-color);
 }
 
-/* ---------- Clear Search ---------- */
-
 .search-clear-btn {
     flex: 0 0 auto;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     min-height: 40px;
-
     padding: 0 16px;
-
     border: 1px solid var(--border-color);
     border-radius: 9px;
-
     background: var(--surface-color);
     color: var(--primary-color);
-
     font-size: 13px;
     font-weight: 600;
-
     text-decoration: none;
-
     transition:
         background 0.2s ease,
         border-color 0.2s ease,
@@ -2169,22 +1994,15 @@ textarea.form-control {
     background: var(--secondary-bg);
     border-color: var(--primary-color);
     color: var(--primary-hover);
-
     transform: translateY(-1px);
 }
-
-/* ---------- Result Summary ---------- */
 
 .search-results-summary {
     display: flex;
     align-items: center;
-
     gap: 8px;
-
     margin: 0 4px 18px;
-
     color: var(--muted-color);
-
     font-size: 13px;
     font-weight: 500;
 }
@@ -2193,8 +2011,6 @@ textarea.form-control {
     color: var(--heading-color);
     font-weight: 600;
 }
-
-/* ---------- Search Result Cards ---------- */
 
 .search-page .post-list {
     display: flex;
@@ -2224,56 +2040,39 @@ textarea.form-control {
     word-break: break-word;
 }
 
-/* ---------- Search Empty State ---------- */
-
 .search-empty {
     width: 100%;
-
     margin-top: 20px;
     padding: 55px 30px;
-
     text-align: center;
-
     background: var(--surface-color);
-
     border: 1px solid var(--border-color);
     border-radius: 18px;
-
     box-shadow: var(--shadow-soft);
 }
 
 .search-empty-icon {
     width: 68px;
     height: 68px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     margin: 0 auto 18px;
-
     border-radius: 18px;
-
     background: var(--secondary-bg);
-
     font-size: 30px;
 }
 
 .search-empty h2 {
     margin: 0 0 8px;
-
     color: var(--heading-color);
-
     font-size: 1.5rem;
 }
 
 .search-empty p {
     max-width: 500px;
-
     margin: 0 auto 25px;
-
     color: var(--muted-color);
-
     font-size: 0.95rem;
     line-height: 1.7;
 }
@@ -2286,17 +2085,13 @@ textarea.form-control {
     display: flex;
     align-items: center;
     justify-content: center;
-
     gap: 12px;
-
     flex-wrap: wrap;
 }
 
 .search-empty-actions .action-btn {
     min-width: 145px;
 }
-
-/* ---------- Search Pagination ---------- */
 
 .search-page .pagination {
     margin-top: 32px;
@@ -2325,8 +2120,6 @@ textarea.form-control {
     border-top: 1px solid var(--border-color);
 }
 
-/* ---------- Discussion heading ---------- */
-
 .comment-heading {
     margin: 0 0 5px;
     color: var(--heading-color);
@@ -2341,8 +2134,6 @@ textarea.form-control {
     font-size: 0.92rem;
     line-height: 1.5;
 }
-
-/* ---------- Login message ---------- */
 
 .comment-login {
     margin: 15px 0 25px;
@@ -2360,13 +2151,9 @@ textarea.form-control {
     color: var(--primary-hover);
 }
 
-/* ---------- Comment list ---------- */
-
 .comments-list {
     margin-top: 28px;
 }
-
-/* ---------- Comment card ---------- */
 
 .comment-card {
     margin-bottom: 14px;
@@ -2374,16 +2161,11 @@ textarea.form-control {
     background: var(--surface-soft);
     border: 1px solid var(--border-color);
     border-radius: 13px;
-    transition:
-        background-color 0.2s ease,
-        border-color 0.2s ease;
 }
 
 .comment-card:hover {
     border-color: var(--input-border);
 }
-
-/* ---------- Comment header ---------- */
 
 .comment-header {
     display: flex;
@@ -2408,8 +2190,6 @@ textarea.form-control {
     line-height: 1.4;
 }
 
-/* ---------- Comment content ---------- */
-
 .comment-content {
     margin: 14px 0 0;
     color: var(--text-color);
@@ -2418,8 +2198,6 @@ textarea.form-control {
     overflow-wrap: anywhere;
     word-break: break-word;
 }
-
-/* ---------- Comment actions ---------- */
 
 .comment-actions {
     display: flex;
@@ -2458,8 +2236,6 @@ textarea.form-control {
     margin: 0;
 }
 
-/* ---------- Empty comments ---------- */
-
 .no-comments {
     margin: 25px 0 0;
     padding: 20px;
@@ -2476,25 +2252,17 @@ textarea.form-control {
 
 .account-section {
     width: min(92%, 760px);
-
     margin: 40px auto;
-
     padding: 35px;
-
     background: var(--surface-color);
-
     border-radius: 20px;
-
     border: 1px solid var(--border-color);
-
     box-shadow: var(--shadow-medium);
 }
 
 .account-section > div:first-of-type {
     text-align: center;
-
     padding-bottom: 25px;
-
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -2519,39 +2287,28 @@ textarea.form-control {
 
 .account-heading {
     margin: 8px 0 5px;
-
     font-size: 28px;
-
     font-weight: 700;
-
     color: var(--heading-color);
 }
 
 .account-email {
     margin: 0;
-
     color: var(--muted-color);
-
     font-size: 15px;
 }
 
 .account-buttons {
     display: flex;
-
     justify-content: center;
-
     gap: 15px;
-
     margin-top: 35px;
-
     flex-wrap: wrap;
 }
 
 .account-form-heading {
     margin: 30px 0 20px;
-
     font-size: 1.5rem;
-
     color: var(--heading-color);
 }
 
@@ -2565,15 +2322,12 @@ textarea.form-control {
 
 .account-section .form-group label {
     font-size: 14px;
-
     font-weight: 600;
-
     color: var(--heading-color);
 }
 
 .account-section .form-control {
     min-height: 44px;
-
     border-radius: 10px;
 }
 
@@ -2583,57 +2337,37 @@ textarea.form-control {
 
 .account-section .form-btn {
     width: 100%;
-
     margin-top: 5px;
 }
 
 .profile-bio {
     max-width: 600px;
-
     margin: 18px auto;
-
     color: var(--muted-color);
-
     line-height: 1.8;
 }
 
 .profile-links {
     display: flex;
-
     justify-content: center;
-
     align-items: center;
-
     gap: 12px;
-
     flex-wrap: wrap;
-
     margin: 22px 0 10px;
 }
 
 .profile-links a {
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
-
     padding: 9px 15px;
-
     border: 1px solid var(--border-color);
-
     border-radius: 9px;
-
     background: var(--surface-soft);
-
     color: var(--primary-color);
-
     font-size: 14px;
-
     font-weight: 600;
-
     text-decoration: none;
-
     transition:
         background 0.2s ease,
         border-color 0.2s ease,
@@ -2643,11 +2377,8 @@ textarea.form-control {
 
 .profile-links a:hover {
     background: var(--secondary-bg);
-
     border-color: var(--primary-color);
-
     color: var(--primary-hover);
-
     transform: translateY(-1px);
 }
 
@@ -2661,10 +2392,10 @@ textarea.form-control {
 ========================================================= */
 
 .dashboard-stats {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    margin: 35px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 14px;
+    margin: 0 auto;
 }
 
 .stat-card {
@@ -2693,6 +2424,28 @@ textarea.form-control {
     font-weight: 500;
 }
 
+.dashboard-stats .stat-card {
+    min-height: 120px;
+    padding: 18px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.dashboard-stats .stat-card h3 {
+    margin: 0 0 8px;
+    font-size: 28px;
+}
+
+.dashboard-stats .stat-card p {
+    margin: 0;
+    font-size: 14px;
+    text-align: center;
+    line-height: 1.4;
+}
+
 .dashboard-meta {
     color: var(--muted-color);
     font-size: 0.95rem;
@@ -2700,36 +2453,24 @@ textarea.form-control {
     margin-bottom: 20px;
 }
 
-/* ---------- Dashboard post footer ---------- */
-
 .dashboard-post-footer {
     width: 100%;
-
     margin-top: 20px;
     padding-top: 15px;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     gap: 18px;
-
     border-top: 1px solid var(--border-color);
 }
 
-/* ---------- Like / comment statistics ---------- */
-
 .dashboard-post-stats {
     flex: 0 0 auto;
-
     display: flex;
     align-items: center;
     justify-content: flex-start;
-
     gap: 15px;
-
     min-width: 0;
-
     color: var(--muted-color);
     font-weight: 500;
     line-height: 1;
@@ -2746,8 +2487,6 @@ textarea.form-control {
     white-space: nowrap;
 }
 
-/* Keep the like control visually identical to the comment link. */
-
 .dashboard-post-stats .like-form {
     display: inline-flex;
     align-items: center;
@@ -2760,34 +2499,26 @@ textarea.form-control {
 .dashboard-post-stats .inline-reaction-btn {
     appearance: none;
     -webkit-appearance: none;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     gap: 4px;
-
     width: auto;
     min-width: 0;
     height: 24px;
     min-height: 24px;
-
     margin: 0;
     padding: 0;
-
     border: 0;
     border-radius: 0;
     outline: none;
-
     background: transparent;
     box-shadow: none;
-
     color: var(--muted-color);
     font-family: inherit;
     font-size: 15px;
     font-weight: 500;
     line-height: 1;
-
     cursor: pointer;
 }
 
@@ -2795,12 +2526,10 @@ textarea.form-control {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     width: 18px;
     height: 18px;
     margin: 0;
     padding: 0;
-
     font-size: 15px;
     line-height: 1;
 }
@@ -2808,12 +2537,10 @@ textarea.form-control {
 .dashboard-post-stats .like-count {
     display: inline-flex;
     align-items: center;
-
     height: 20px;
     min-width: 10px;
     margin: 0;
     padding: 0;
-
     line-height: 1;
 }
 
@@ -2821,20 +2548,15 @@ textarea.form-control {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     gap: 4px;
-
     height: 24px;
     min-height: 24px;
-
     margin: 0;
     padding: 0;
-
     color: var(--muted-color);
     font-size: 15px;
     font-weight: 500;
     line-height: 1;
-
     text-decoration: none;
     white-space: nowrap;
 }
@@ -2856,27 +2578,20 @@ textarea.form-control {
     border-radius: 4px;
 }
 
-/* ---------- Dashboard action buttons ---------- */
-
 .dashboard-post-buttons {
     flex: 0 0 auto;
-
     display: flex;
     align-items: center;
     justify-content: flex-end;
-
     gap: 14px;
-
     margin: 0;
     padding: 0;
-
     white-space: nowrap;
 }
 
 .dashboard-post-buttons a {
     display: inline-flex;
     align-items: center;
-
     margin: 0;
     text-decoration: none;
     font-weight: 600;
@@ -2888,8 +2603,6 @@ textarea.form-control {
 .dashboard-post-buttons a:hover {
     color: var(--primary-hover);
 }
-
-/* View/Edit use the normal text-link appearance on the dashboard. */
 
 .dashboard-post-buttons .read-more {
     margin-top: 0;
@@ -2909,6 +2622,28 @@ textarea.form-control {
 .dashboard-post-buttons .edit-btn:hover {
     background: var(--border-color);
     color: var(--heading-color);
+}
+
+.dashboard-action-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 35px auto !important;
+}
+
+.dashboard-action-buttons .hero-btn {
+    min-width: 160px;
+    min-height: 48px;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    margin: 0;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .top-viewed-posts {
@@ -2954,39 +2689,30 @@ textarea.form-control {
 
 .pagination {
     display: flex;
-
     justify-content: center;
-
     align-items: center;
-
     gap: 10px;
-
     margin: 40px 0;
 }
 
 .pagination a,
 .pagination span {
     width: 40px;
-
     height: 40px;
-
     display: flex;
-
     justify-content: center;
-
     align-items: center;
-
     text-decoration: none;
-
     color: var(--primary-color);
-
     border-radius: 10px;
-
     background: var(--surface-color);
-
     border: 1px solid var(--border-color);
-
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.pagination a:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
 }
 
 .pagination .active {
@@ -3006,7 +2732,6 @@ textarea.form-control {
 
 .recent-posts .post-excerpt {
     font-size: 0.95rem;
-
     line-height: 1.7;
 }
 
@@ -3016,21 +2741,17 @@ textarea.form-control {
 
 .category-empty {
     text-align: center;
-
     padding: 35px 25px;
-
     color: var(--muted-color);
 }
 
 .category-empty h3 {
     color: var(--heading-color);
-
     margin-bottom: 10px;
 }
 
 .category-empty p {
     color: var(--muted-color);
-
     margin-bottom: 20px;
 }
 
@@ -3040,49 +2761,33 @@ textarea.form-control {
 
 .error-page {
     width: 90%;
-
     max-width: 650px;
-
     margin: 80px auto;
-
     padding: 50px 30px;
-
     text-align: center;
-
     background: var(--surface-color);
-
     border: 1px solid var(--border-color);
-
     border-radius: 16px;
-
     box-shadow: var(--shadow-soft);
 }
 
 .error-page h1 {
     margin: 0;
-
     font-size: 5rem;
-
     line-height: 1;
-
     color: var(--heading-color);
 }
 
 .error-page h2 {
     margin: 20px 0 10px;
-
     font-size: 1.8rem;
-
     color: var(--heading-color);
 }
 
 .error-page p {
     margin: 0 auto 25px;
-
     max-width: 500px;
-
     color: var(--muted-color);
-
     line-height: 1.7;
 }
 
@@ -3098,11 +2803,9 @@ textarea.form-control {
 
 .notifications-top {
     position: relative;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     width: 100%;
     margin-bottom: 28px;
     padding-right: 55px;
@@ -3143,36 +2846,24 @@ textarea.form-control {
     font-size: 14px;
 }
 
-/* ==========================================
-   NOTIFICATIONS — MODERN CLOSE BUTTON
-   ========================================== */
-
 .notifications-close {
     position: absolute;
     top: 50%;
     right: 0;
-
     width: 38px;
     height: 38px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     transform: translateY(-50%);
-
     border: 1px solid var(--border-color);
     border-radius: 50%;
-
     background: var(--surface-color);
     color: var(--muted-color);
-
     font-size: 20px;
     font-weight: 500;
     line-height: 1;
-
     cursor: pointer;
-
     transition:
         background 0.2s ease,
         color 0.2s ease,
@@ -3185,17 +2876,13 @@ textarea.form-control {
     background: var(--primary-color);
     border-color: var(--primary-color);
     color: #fff;
-
     transform: translateY(-50%) scale(1.06);
-
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
 }
 
 .notifications-close:active {
     transform: translateY(-50%) scale(0.94);
 }
-
-/* Keyboard accessibility */
 
 .notifications-close:focus-visible {
     outline: 2px solid var(--primary-color);
@@ -3267,7 +2954,6 @@ textarea.form-control {
     border-radius: 15px;
     background: var(--surface-color);
     box-shadow: var(--shadow-soft);
-    transition: 0.2s ease;
 }
 
 .notification-item:hover {
@@ -3276,10 +2962,8 @@ textarea.form-control {
 }
 
 .notification-item.unread {
-    border-left: 3px solid transparent;
+    border-left: 3px solid var(--accent-color);
     background: var(--surface-soft);
-    border-image: none;
-    border-left-color: var(--accent-color);
 }
 
 .notification-item .notification-icon {
@@ -3440,41 +3124,29 @@ textarea.form-control {
 
 .site-footer {
     margin-top: 60px;
-
     padding: 30px 20px;
-
     text-align: center;
-
     border-top: 1px solid var(--border-color);
-
     background: var(--surface-color);
 }
 
 .site-footer p {
     color: var(--muted-color);
-
     margin-bottom: 15px;
-
     font-size: 0.95rem;
 }
 
 .footer-links {
     display: flex;
-
     justify-content: center;
-
     gap: 20px;
-
     flex-wrap: wrap;
 }
 
 .footer-links a {
     color: var(--primary-color);
-
     text-decoration: none;
-
     font-weight: 600;
-
     transition: 0.2s;
 }
 
@@ -3488,17 +3160,11 @@ textarea.form-control {
 
 .toast-container {
     position: fixed;
-
     top: 90px;
-
     right: 25px;
-
     z-index: 9999;
-
     display: flex;
-
     flex-direction: column;
-
     gap: 12px;
 }
 
@@ -3539,19 +3205,14 @@ textarea.form-control {
 }
 
 @keyframes toastSlideIn {
-
     from {
         opacity: 0;
-
         transform: translateX(30px);
     }
-
     to {
         opacity: 1;
-
         transform: translateX(0);
     }
-
 }
 
 /* =========================================================
@@ -3560,24 +3221,17 @@ textarea.form-control {
 
 @media (max-width: 768px) {
 
-    /* ---------- General ---------- */
-
     .container {
         width: 94%;
     }
 
-
-    /* ---------- Hero ---------- */
-
     .hero {
         margin: 45px auto;
-
         padding: 40px 20px;
     }
 
     .hero h1 {
         font-size: 2rem;
-
         line-height: 1.25;
     }
 
@@ -3587,29 +3241,22 @@ textarea.form-control {
 
     .hero-buttons {
         flex-direction: column;
-
         gap: 10px;
     }
 
     .hero-buttons a {
         width: 100%;
-
         text-align: center;
     }
 
     .hero-btn {
         width: 100%;
-
         text-align: center;
     }
 
     .hero-tag {
         font-size: 13px;
     }
-
-    /* =========================================================
-        TRENDING — MOBILE
-    ========================================================= */
 
     .trending-section {
         margin-bottom: 40px;
@@ -3640,12 +3287,9 @@ textarea.form-control {
 
     .trending-rank {
         flex: 0 0 36px;
-
         width: 36px;
         height: 36px;
-
         border-radius: 10px;
-
         font-size: 12px;
     }
 
@@ -3666,11 +3310,9 @@ textarea.form-control {
     .trending-arrow {
         width: 30px;
         height: 30px;
-
         font-size: 16px;
     }
 
-    /* ---------- Navbar ---------- */
     .navbar{padding:0 14px;}
     .nav-top{min-height:64px;grid-template-columns:minmax(0,1fr) auto;gap:10px;}
     .logo{font-size:22px;}
@@ -3683,6 +3325,7 @@ textarea.form-control {
     .mobile-search .search-input{height:40px;padding:0 12px;}
     .mobile-search .search-btn{width:72px;height:40px;padding:0;}
     .nav-menu{top:calc(100% + 8px);right:14px;width:min(250px,calc(100vw - 40px));padding:8px;}
+
     .menu-user {
         padding: 8px;
         gap: 10px;
@@ -3736,49 +3379,31 @@ textarea.form-control {
         left: 34px;
     }
 
-    /* ---------- Search ---------- */
-
     .search-form {
         width: 100%;
-
         display: grid;
-
         grid-template-columns: minmax(0, 1fr) 76px;
-
         align-items: center;
-
         gap: 10px;
-
         margin: 0;
     }
 
     .search-input {
         width: 100%;
-
         max-width: none;
-
         min-width: 0;
-
         height: 42px;
-
         padding: 0 14px;
     }
 
     .search-btn {
         width: 76px;
-
         min-width: 76px;
-
         max-width: 76px;
-
         height: 42px;
-
         padding: 0;
-
         display: flex;
-
         align-items: center;
-
         justify-content: center;
     }
 
@@ -3809,9 +3434,6 @@ textarea.form-control {
         padding: 17px;
     }
 
-
-    /* ---------- Posts ---------- */
-
     .posts {
         margin-top: -15px;
     }
@@ -3822,9 +3444,7 @@ textarea.form-control {
 
     .post-card {
         padding: 20px;
-
         border-left: 3px solid var(--primary-color);
-
         border-radius: 14px;
     }
 
@@ -3834,43 +3454,34 @@ textarea.form-control {
 
     .post-card h3 {
         font-size: 1.3rem;
-
         line-height: 1.45;
     }
 
     .post-meta {
         flex-direction: column;
-
         gap: 5px;
-
         align-items: flex-start;
     }
 
     .post-footer {
         flex-direction: column;
-
         align-items: flex-start;
-
         gap: 15px;
     }
 
     .post-reactions {
         width: 100%;
-
         flex-wrap: wrap;
-
         gap: 10px;
     }
 
     .read-more {
         width: 100%;
-
         text-align: center;
     }
 
     .back-button {
         margin-top: 12px;
-
         margin-bottom: 24px;
     }
 
@@ -3917,9 +3528,6 @@ textarea.form-control {
         font-size: 10.5px;
     }
 
-
-    /* ---------- Single Post ---------- */
-
     .single-post {
         width: calc(100% - 24px);
         margin: 0 auto 30px;
@@ -3930,11 +3538,9 @@ textarea.form-control {
     .single-post h1 {
         max-width: 100%;
         margin: 14px 0 18px;
-
         font-size: 1.8rem;
         line-height: 1.3;
         letter-spacing: -0.2px;
-
         overflow-wrap: anywhere;
         word-break: break-word;
     }
@@ -3942,7 +3548,6 @@ textarea.form-control {
     .single-post .post-info {
         display: flex;
         align-items: center;
-
         gap: 10px;
         margin-bottom: 25px;
     }
@@ -3968,42 +3573,31 @@ textarea.form-control {
     .post-body {
         max-width: 100%;
         margin: 0 0 28px;
-
         font-size: 1rem;
         line-height: 1.85;
-
         overflow-wrap: anywhere;
         word-break: break-word;
     }
-
-
-    /* ---------- Post Actions ---------- */
 
     .post-actions {
         display: flex;
         align-items: center;
         flex-wrap: wrap;
         gap: 8px;
-
         padding-top: 20px;
         margin: 0;
     }
 
     .post-actions .action-btn {
         height: 38px;
-
         display: inline-flex;
         align-items: center;
         justify-content: center;
-
         padding: 0 11px;
-
         font-size: 12.5px;
         font-weight: 600;
-
         line-height: 1;
         white-space: nowrap;
-
         box-sizing: border-box;
     }
 
@@ -4014,9 +3608,7 @@ textarea.form-control {
     .post-actions .heart-icon {
         width: 17px;
         height: 17px;
-
         margin-right: 5px;
-
         font-size: 14px;
     }
 
@@ -4033,9 +3625,7 @@ textarea.form-control {
     .post-actions .edit-btn,
     .post-actions .delete-btn {
         height: 38px;
-
         padding: 0 11px;
-
         white-space: nowrap;
     }
 
@@ -4069,9 +3659,6 @@ textarea.form-control {
         padding: 4px 9px;
         font-size: 12px;
     }
-
-
-    /* ---------- Comments ---------- */
 
     .comments-section {
         scroll-margin-top: 90px;
@@ -4141,14 +3728,9 @@ textarea.form-control {
         font-size: 0.88rem;
     }
 
-
-    /* ---------- Forms ---------- */
-
     .form-container {
         width: 95%;
-
         padding: 22px;
-
         margin: 25px auto;
     }
 
@@ -4164,16 +3746,10 @@ textarea.form-control {
         margin-bottom: 18px;
     }
 
-
-    /* ---------- Account ---------- */
-
     .account-section {
         width: calc(100% - 30px);
-
         margin: 20px auto;
-
         padding: 24px 18px;
-
         border-radius: 16px;
     }
 
@@ -4183,7 +3759,6 @@ textarea.form-control {
 
     .account-email {
         font-size: 14px;
-
         word-break: break-word;
     }
 
@@ -4193,7 +3768,6 @@ textarea.form-control {
 
     .custom-file-label {
         width: 100%;
-
         box-sizing: border-box;
     }
 
@@ -4203,17 +3777,13 @@ textarea.form-control {
 
     .account-section .hero-btn {
         width: auto;
-
         min-height: 40px;
-
         padding: 9px 16px;
-
         font-size: 14px;
     }
 
     .profile-links {
         flex-direction: column;
-
         width: 100%;
     }
 
@@ -4221,48 +3791,41 @@ textarea.form-control {
         width: 100%;
     }
 
-
-    /* ---------- Account Action Buttons ---------- */
-
-    .account-action-buttons .hero-btn {
-        width: auto;
-
-        min-height: 40px;
-
-        padding: 9px 16px;
-
-        font-size: 14px;
+    .account-action-buttons {
+        flex-direction: column !important;
+        align-items: center;
+        gap: 10px !important;
     }
 
-
-    /* ---------- Dashboard ---------- */
+    .account-action-buttons .hero-btn {
+        width: 80%;
+        max-width: 420px;
+        box-sizing: border-box;
+        margin: 0;
+    }
 
     .dashboard-stats {
         display: grid;
-
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-
+        grid-template-columns: repeat(2, 1fr);
         gap: 10px;
-
         margin: 25px 0;
     }
 
     .stat-card {
         min-width: 0;
-
-        padding: 15px 10px;
+        min-height: 95px;
+        padding: 18px 10px;
     }
 
     .stat-card h3 {
-        font-size: 1.6rem;
+        font-size: 24px;
+        margin-bottom: 8px;
     }
 
     .stat-card p {
-        font-size: 0.85rem;
+        font-size: 13px;
     }
 
-
-    /* Dashboard post footer stays in one row on mobile. */
     .dashboard-post-footer {
         flex-wrap: nowrap;
         gap: 12px;
@@ -4280,6 +3843,20 @@ textarea.form-control {
     .dashboard-post-buttons .read-more {
         width: auto;
         text-align: left;
+    }
+
+    .dashboard-action-buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .dashboard-action-buttons .hero-btn {
+        width: 80%;
+        max-width: 420px;
+        box-sizing: border-box;
+        margin: 0;
     }
 
     .top-viewed-post {
@@ -4300,94 +3877,67 @@ textarea.form-control {
         font-size: 12px;
     }
 
-    /* ---------- Recent Posts ---------- */
-
     .recent-posts {
         width: 100%;
     }
 
     .recent-posts .post-card {
         padding: 18px;
-
         margin-bottom: 18px;
     }
 
     .recent-posts .post-card h3 {
         font-size: 1.2rem;
-
         line-height: 1.5;
-
         margin: 12px 0;
     }
 
     .recent-posts .post-excerpt {
         font-size: 0.9rem;
-
         line-height: 1.7;
     }
 
     .recent-posts .post-meta {
         font-size: 0.8rem;
-
         margin-bottom: 15px;
     }
 
     .recent-posts .post-footer {
         display: flex;
-
         align-items: center;
-
         justify-content: space-between;
-
         flex-direction: row;
-
         gap: 10px;
     }
 
     .recent-posts .post-footer a {
         font-size: 0.9rem;
-
         text-decoration: none;
     }
 
     .recent-posts .post-actions {
         display: flex;
-
         align-items: center;
-
         justify-content: space-between;
-
         flex-direction: row;
-
         gap: 15px;
     }
 
-
-    /* ---------- Pagination ---------- */
-
     .pagination {
         flex-wrap: wrap;
-
         gap: 8px;
     }
 
     .pagination a,
     .pagination span {
         width: 36px;
-
         height: 36px;
-
         font-size: 14px;
     }
 
-
-    /* ---------- Error Pages ---------- */
-
     .error-page {
         width: 95%;
-
         margin: 50px auto;
-
         padding: 40px 20px;
     }
 
@@ -4398,10 +3948,6 @@ textarea.form-control {
     .error-page h2 {
         font-size: 1.5rem;
     }
-
-
-
-    /* ---------- Notifications ---------- */
 
     .notifications-page {
         width: calc(100% - 24px);
@@ -4483,43 +4029,29 @@ textarea.form-control {
         display: none;
     }
 
-    /* ---------- Footer ---------- */
-
     .site-footer {
         padding: 25px 15px;
     }
 
     .footer-links {
         flex-direction: column;
-
         gap: 10px;
     }
 
-
-    /* ---------- Images ---------- */
-
     img {
         max-width: 100%;
-
         height: auto;
     }
 
-
-    /* ---------- Toast ---------- */
-
     .toast-container {
         top: 75px;
-
         left: 15px;
-
         right: 15px;
     }
 
     .toast {
         min-width: 0;
-
         width: 100%;
-
         max-width: none;
     }
 
@@ -4547,12 +4079,17 @@ textarea.form-control {
     .notifications-actions{gap:7px;}
     .mark-all-read-btn{padding:0 10px;font-size:11px;}
 
-    .dashboard-stats{gap:7px;}
-    .stat-card{padding:13px 6px;}
-    .stat-card h3{font-size:1.4rem;}
-    .stat-card p{font-size:0.75rem;}
+    .dashboard-stats{gap:8px;}
+    .stat-card{padding:15px 8px; min-height: 90px;}
+    .stat-card h3{font-size:22px;}
+    .stat-card p{font-size:12px;}
     .dashboard-post-stats{gap:10px;}
     .dashboard-post-buttons{gap:10px;}
+
+    .dashboard-action-buttons .hero-btn,
+    .account-action-buttons .hero-btn {
+        width: 90%;
+    }
 
     .trending-card {
         gap: 9px;
@@ -4563,7 +4100,6 @@ textarea.form-control {
         flex-basis: 32px;
         width: 32px;
         height: 32px;
-
         font-size: 11px;
     }
 
@@ -4655,6 +4191,16 @@ textarea.form-control {
     }
 }
 
+/* =========================================================
+   SHARED TRANSITIONS
+   (consolidated here — post-card, trending-card,
+   related-post-card, comment-card, and notification-item
+   previously had their own inline transition declarations;
+   those were fully overridden by this rule since it came
+   later in the file, so they were removed to avoid
+   dead/duplicate CSS.)
+========================================================= */
+
 .post-card,
 .stat-card,
 .comment-card,
@@ -4669,83 +4215,6 @@ textarea.form-control {
         box-shadow 0.25s ease,
         border-color 0.25s ease,
         background-color 0.25s ease;
-}
-
-.notification-link,
-.menu-toggle {
-    transition:
-        transform 0.2s ease,
-        background-color 0.2s ease,
-        border-color 0.2s ease;
-}
-
-.notification-link:active,
-.menu-toggle:active {
-    transform: scale(0.92);
-}
-
-/* ---------------------------------------------------------
-   BUTTONS — gradient primary + lift on hover
---------------------------------------------------------- */
-
-.hero-btn:not(.secondary) {
-    background: var(--gradient-primary);
-    border: none;
-    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.28);
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.hero-btn:not(.secondary):hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.36);
-}
-
-.hero-btn:not(.secondary):active {
-    transform: translateY(0);
-}
-
-.post-card {
-        border-left-width: 3px;
-    }
-
-.post-card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--gradient-primary);
-    transform: scaleY(0);
-    transform-origin: top;
-    transition: transform 0.3s ease;
-}
-
-.post-card:hover::before {
-    transform: scaleY(1);
-}
-
-/* ---------------------------------------------------------
-   TRENDING & RELATED CARDS — subtle lift
---------------------------------------------------------- */
-
-.trending-card,
-.related-post-card {
-    border: 1px solid var(--border-color);
-}
-
-.trending-card:hover,
-.related-post-card:hover {
-    transform: translateY(-4px) scale(1.01);
-    box-shadow: var(--shadow-heavy);
-}
-
-.stat-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-medium);
-    border-color: var(--primary-color);
 }
 
 .like-form button:active .heart-icon,
@@ -4770,49 +4239,10 @@ textarea.form-control {
     color: var(--primary-color);
 }
 
-.pagination a:hover {
-    transform: translateY(-2px);
-    border-color: var(--primary-color);
-}
-
-/* ---------------------------------------------------------
-   EMPTY STATES — friendlier
---------------------------------------------------------- */
-
-.category-empty,
-.search-empty,
-.notifications-empty,
-.tag-empty {
-    background-image:
-        linear-gradient(var(--surface-color), var(--surface-color)),
-        var(--gradient-hero-glow);
-    background-origin: border-box;
-}
-
-.search-empty-icon,
-.notifications-empty .empty-icon {
-    background: var(--gradient-soft);
-}
-
-/* ---------------------------------------------------------
-   WARM SECONDARY ACCENT — used sparingly for delight moments
---------------------------------------------------------- */
-
-.heart-icon,
-.inline-reaction-btn.liked .heart-icon,
-.like-form.liked .heart-icon {
-    filter: none;
-}
-
-.like-form.liked .inline-reaction-btn,
-.inline-reaction-btn.liked {
-    color: var(--accent-color);
-}
-
-/* ---------------------------------------------------------
+/* =========================================================
    CATEGORY ACCENT COLORS
    8 deterministic colors assigned via category_color_class()
---------------------------------------------------------- */
+========================================================= */
 
 .post-category.cat-color-0 {
     background: #eff6ff;
@@ -4854,8 +4284,6 @@ textarea.form-control {
     color: #ca8a04;
 }
 
-/* Dark mode: same hues, adjusted for dark backgrounds */
-
 .dark-mode .post-category.cat-color-0 {
     background: rgba(37, 99, 235, 0.15);
     color: #93c5fd;
@@ -4896,40 +4324,42 @@ textarea.form-control {
     color: #fde047;
 }
 
-/* Category accent also tints the left-edge stripe on post-card hover */
-
 .post-card.cat-color-0:hover::before { background: #2563eb; }
-
 .post-card.cat-color-1:hover::before { background: #dc2626; }
-
 .post-card.cat-color-2:hover::before { background: #16a34a; }
-
 .post-card.cat-color-3:hover::before { background: #ea580c; }
-
 .post-card.cat-color-4:hover::before { background: #9333ea; }
-
 .post-card.cat-color-5:hover::before { background: #c026d3; }
-
 .post-card.cat-color-6:hover::before { background: #0d9488; }
-
 .post-card.cat-color-7:hover::before { background: #ca8a04; }
 
 /* ---------------------------------------------------------
-   GOLD TEXT/GRADIENT NEEDS DARK TEXT ON GOLD BUTTONS
-   (gold background + white text fails contrast — fix here)
+   EMPTY STATES
 --------------------------------------------------------- */
 
-.hero-btn:not(.secondary),
-.form-btn {
-    color: #1a1200;
-    font-weight: 600;
-    position: relative;
-    overflow: hidden;
+.category-empty,
+.search-empty,
+.notifications-empty,
+.tag-empty {
+    background-image:
+        linear-gradient(var(--surface-color), var(--surface-color)),
+        var(--gradient-hero-glow);
+    background-origin: border-box;
 }
 
-.dark-mode .hero-btn:not(.secondary),
-.dark-mode .form-btn {
-    color: #1a1200;
+.search-empty-icon,
+.notifications-empty .empty-icon {
+    background: var(--gradient-soft);
+}
+
+/* ---------------------------------------------------------
+   LIKE ICON — stays warm red/rose, distinct from gold accent
+   (keeps the universal "like" signal recognizable)
+--------------------------------------------------------- */
+
+.inline-reaction-btn.liked,
+.like-form.liked .inline-reaction-btn {
+    color: #e0637a;
 }
 
 /* ---------------------------------------------------------
@@ -4943,24 +4373,9 @@ textarea.form-control {
         radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.06), transparent 50%);
 }
 
-/* ---------------------------------------------------------
-   LIKE ICON — stays warm red/rose, distinct from gold accent
-   (keeps the universal "like" signal recognizable)
---------------------------------------------------------- */
-
-.inline-reaction-btn.liked,
-.like-form.liked .inline-reaction-btn {
-    color: #e0637a;
-}
-
 /* =========================================================
-   MICRO-INTERACTIONS & ANIMATIONS
-   Append to the end of main.css.
+   READING PROGRESS BAR
 ========================================================= */
-
-/* ---------------------------------------------------------
-   1. READING PROGRESS BAR
---------------------------------------------------------- */
 
 .reading-progress-bar {
     position: fixed;
@@ -4978,37 +4393,10 @@ textarea.form-control {
     display: block;
 }
 
-.hero-btn:not(.secondary)::after,
-.form-btn::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -75%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(
-        120deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.45) 50%,
-        transparent 100%
-    );
-    transform: skewX(-20deg);
-    transition: left 0.6s ease;
-}
-
-.hero-btn:not(.secondary):hover::after,
-.form-btn:hover::after {
-    left: 130%;
-}
-
-.navbar.scrolled {
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-    backdrop-filter: blur(14px);
-}
-
-/* ---------------------------------------------------------
-   5. LIKE BUTTON BURST
---------------------------------------------------------- */
+/* =========================================================
+   LIKE BUTTON BURST EFFECT
+   (accidentally dropped during cleanup — restored here)
+========================================================= */
 
 .like-form,
 .post-actions .save-form {

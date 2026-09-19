@@ -423,6 +423,22 @@
 
         </footer>
 
+        <div class="confirm-modal-overlay" id="logout-modal-overlay">
+            <div class="confirm-modal">
+                <div class="confirm-modal-icon">🚪</div>
+                <h3>Log out?</h3>
+                <p>You'll need to sign in again to access your account.</p>
+                <div class="confirm-modal-actions">
+                    <button type="button" class="confirm-modal-cancel" id="logout-modal-cancel">
+                        Cancel
+                    </button>
+                    <button type="button" class="confirm-modal-confirm" id="logout-modal-confirm">
+                        Log out
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <script src="{{ url_for('static', filename='js/script.js') }}"
                 defer
         ></script>

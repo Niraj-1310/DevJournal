@@ -85,6 +85,66 @@ function showToast(message, category = "info") {
 }
 
 // ============================================================
+// LOGOUT CONFIRMATION MODAL
+// ============================================================
+
+function initializeLogoutConfirm() {
+
+    const logoutForm =
+        document.querySelector(".menu-logout")?.closest("form");
+
+    const overlay =
+        document.getElementById("logout-modal-overlay");
+
+    const cancelBtn =
+        document.getElementById("logout-modal-cancel");
+
+    const confirmBtn =
+        document.getElementById("logout-modal-confirm");
+
+    if (!logoutForm || !overlay || !cancelBtn || !confirmBtn) {
+        return;
+    }
+
+    function openModal() {
+        overlay.classList.add("open");
+    }
+
+    function closeModal() {
+        overlay.classList.remove("open");
+    }
+
+    logoutForm.addEventListener("submit", function (event) {
+
+        if (logoutForm.dataset.confirmed === "true") {
+            return;
+        }
+
+        event.preventDefault();
+        openModal();
+    });
+
+    cancelBtn.addEventListener("click", closeModal);
+
+    overlay.addEventListener("click", function (event) {
+        if (event.target === overlay) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && overlay.classList.contains("open")) {
+            closeModal();
+        }
+    });
+
+    confirmBtn.addEventListener("click", function () {
+        logoutForm.dataset.confirmed = "true";
+        logoutForm.submit();
+    });
+}
+
+// ============================================================
 // READING PROGRESS BAR
 // ============================================================
 
@@ -1544,5 +1604,6 @@ document.addEventListener(
         initializeSaveSystem();
         initializeReadingProgress();
         initializeNavbarElevation();
+        initializeLogoutConfirm();
     }
 );
